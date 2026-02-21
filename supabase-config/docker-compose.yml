@@ -310,6 +310,7 @@ services:
       IMGPROXY_MAX_SRC_RESOLUTION: 16.8
     networks:
       - plant-network
+
   meta:
     container_name: supabase-meta
     image: supabase/postgres-meta:v0.95.1
@@ -369,6 +370,9 @@ services:
     #     source: ${PWD}/gcloud.json
     #     target: /opt/app/rel/logflare/bin/gcloud.json
     #     read_only: true
+    networks:
+      - plant-network
+
     healthcheck:
       test:
         [
@@ -471,6 +475,8 @@ services:
     volumes:
       - ./volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
       - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro,z
+    networks:
+      - plant-network
     healthcheck:
       test:
         [
