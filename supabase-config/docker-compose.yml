@@ -335,7 +335,6 @@ services:
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
     networks:
       - plant-network
-
   functions:
     container_name: supabase-edge-functions
     image: supabase/edge-runtime:v1.69.28
@@ -374,6 +373,9 @@ services:
     #     source: ${PWD}/gcloud.json
     #     target: /opt/app/rel/logflare/bin/gcloud.json
     #     read_only: true
+    networks:
+      - plant-network
+
     healthcheck:
       test:
         [
@@ -410,12 +412,14 @@ services:
       # Uncomment to use Big Query backend for analytics
       # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
       # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
-
+	
   # Comment out everything below this point if you are using an external Postgres database
   db:
     container_name: supabase-db
     image: supabase/postgres:15.8.1.085
     restart: unless-stopped
+    networks:
+      - plant-network
     volumes:
       - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
       # Must be superuser to create event trigger
@@ -478,6 +482,8 @@ services:
     volumes:
       - ./volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
       - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro,z
+    networks:
+      - plant-network
     healthcheck:
       test:
         [
@@ -513,6 +519,8 @@ services:
       - ${POOLER_PROXY_PORT_TRANSACTION}:6543
     volumes:
       - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro,z
+    networks:
+      - plant-network
     healthcheck:
       test:
         [
@@ -558,6 +566,11 @@ services:
       ]
     networks:
       - plant-network
+
+networks:
+  plant-network:
+    name: plant.io-network
+    external: true
 
 networks:
   plant-network:
