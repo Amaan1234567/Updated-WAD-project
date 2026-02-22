@@ -390,8 +390,6 @@ services:
       db:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
-    networks:
-      - plant-network
     environment:
       LOGFLARE_NODE_HOST: 127.0.0.1
       DB_USERNAME: supabase_admin
@@ -472,8 +470,6 @@ services:
         "-c",
         "log_min_messages=fatal" # prevents Realtime polling queries from appearing in logs
       ]
-    networks:
-      - plant-network
 
   vector:
     container_name: supabase-vector
@@ -504,8 +500,6 @@ services:
         "--config",
         "/etc/vector/vector.yml"
       ]
-    networks:
-      - plant-network
     security_opt:
       - "label=disable"
 
@@ -564,13 +558,6 @@ services:
         "-c",
         "/app/bin/migrate && /app/bin/supavisor eval \"$$(cat /etc/pooler/pooler.exs)\" && /app/bin/server"
       ]
-    networks:
-      - plant-network
-
-networks:
-  plant-network:
-    name: plant.io-network
-    external: true
 
 networks:
   plant-network:
