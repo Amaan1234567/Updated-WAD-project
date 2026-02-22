@@ -27,6 +27,7 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+        dependency-graph-render: false 
     - name: Build api-gateway
       run: mvn -B test --file api-gateway/pom.xml
     - name: Build product-service
