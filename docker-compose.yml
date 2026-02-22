@@ -26,24 +26,28 @@ services:
     container_name: product-service
     image: amaan1234567/plant.io/product-service:latest
     ports:
-      - "8080:8080"
+      - "8081:8081"
     restart: unless-stopped
     healthcheck:
       test:
         [
           "CMD",
           "curl",
-          "-v",
-          "localhost:8080/products/1"
+          "-sSfL",
+          "--head",
+          "-o",
+          "/dev/null",
+          "http://localhost:8081/actuator/health"
         ]
-      timeout: 10s
+      timeout: 60s
       interval: 5s
-      retries: 3
-    depends_on:
-      supabase-pooler:
-        condition: service_healthy
+      retries: 12
+    # depends_on:
+    #   supabase-pooler:
+    #     condition: service_healthy
     networks:
       - plant-network
+    env_file: "products-service/.env"
 
   api-gateway:
     container_name: api-gateway
@@ -66,6 +70,28 @@ services:
       - plant-network
     depends_on:
       product-service:
+        condition: service_healthy
+  frontend:
+    container_name: frontend
+    image: amaan1234567/plant.io/frontend:latest
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-v",
+          "localhost:3000"
+        ]
+      timeout: 10s
+      interval: 5s
+      retries: 3
+    networks:
+      - plant-network
+    depends_on:
+      api-gateway:
         condition: service_healthy
 
 networks:

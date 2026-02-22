@@ -289,8 +289,6 @@ services:
       IMGPROXY_URL: http://imgproxy:5001
     networks:
       - plant-network
-    networks:
-      - plant-network
 
   imgproxy:
     container_name: supabase-imgproxy
@@ -502,8 +500,6 @@ services:
         "--config",
         "/etc/vector/vector.yml"
       ]
-    networks:
-      - plant-network
     security_opt:
       - "label=disable"
 
