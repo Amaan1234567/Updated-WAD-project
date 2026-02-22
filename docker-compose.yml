@@ -1,0 +1,75 @@
+include:
+  - supabase-config/docker-compose.yml
+
+services:
+  discovery-server:
+    container_name: discovery-server
+    image: amaan1234567/plant.io/discovery-server:latest
+    ports:
+      - "8761:8761"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-v",
+          "localhost:8761"
+        ]
+      timeout: 10s
+      interval: 5s
+      retries: 3
+    networks:
+      - plant-network
+  
+  product-service:
+    container_name: product-service
+    image: amaan1234567/plant.io/product-service:latest
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-v",
+          "localhost:8080/products/1"
+        ]
+      timeout: 10s
+      interval: 5s
+      retries: 3
+    depends_on:
+      supabase-pooler:
+        condition: service_healthy
+    networks:
+      - plant-network
+
+  api-gateway:
+    container_name: api-gateway
+    image: amaan1234567/plant.io/api-gateway:latest
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-v",
+          "localhost:8080/products/1"
+        ]
+      timeout: 10s
+      interval: 5s
+      retries: 3
+    networks:
+      - plant-network
+    depends_on:
+      product-service:
+        condition: service_healthy
+
+networks:
+  plant-network:
+    name: plant.io-network
+
+  

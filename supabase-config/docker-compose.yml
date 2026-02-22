@@ -59,6 +59,8 @@ services:
       NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
       # Uncomment to use Big Query backend for analytics
       # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
+    networks:
+      - plant-network
 
   kong:
     container_name: supabase-kong
@@ -87,6 +89,8 @@ services:
       DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
     # https://unix.stackexchange.com/a/294837
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
+    networks:
+      - plant-network
 
   auth:
     container_name: supabase-auth
@@ -170,6 +174,8 @@ services:
       # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
       # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
       # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
+    networks:
+      - plant-network
 
   rest:
     container_name: supabase-rest
@@ -193,6 +199,8 @@ services:
       [
         "postgrest"
       ]
+    networks:
+      - plant-network
 
   realtime:
     # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
@@ -232,6 +240,8 @@ services:
       APP_NAME: realtime
       SEED_SELF_HOST: "true"
       RUN_JANITOR: "true"
+    networks:
+      - plant-network
 
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   storage:
@@ -277,6 +287,8 @@ services:
       GLOBAL_S3_BUCKET: stub
       ENABLE_IMAGE_TRANSFORMATION: "true"
       IMGPROXY_URL: http://imgproxy:5001
+    networks:
+      - plant-network
 
   imgproxy:
     container_name: supabase-imgproxy
@@ -300,6 +312,8 @@ services:
       IMGPROXY_USE_ETAG: "true"
       IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
       IMGPROXY_MAX_SRC_RESOLUTION: 16.8
+    networks:
+      - plant-network
 
   meta:
     container_name: supabase-meta
@@ -319,6 +333,8 @@ services:
       PG_META_DB_USER: supabase_admin
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
+    networks:
+      - plant-network
 
   functions:
     container_name: supabase-edge-functions
@@ -343,6 +359,8 @@ services:
         "--main-service",
         "/home/deno/functions/main"
       ]
+    networks:
+      - plant-network
 
   analytics:
     container_name: supabase-analytics
@@ -370,6 +388,8 @@ services:
       db:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
+    networks:
+      - plant-network
     environment:
       LOGFLARE_NODE_HOST: 127.0.0.1
       DB_USERNAME: supabase_admin
@@ -448,6 +468,8 @@ services:
         "-c",
         "log_min_messages=fatal" # prevents Realtime polling queries from appearing in logs
       ]
+    networks:
+      - plant-network
 
   vector:
     container_name: supabase-vector
@@ -476,6 +498,8 @@ services:
         "--config",
         "/etc/vector/vector.yml"
       ]
+    networks:
+      - plant-network
     security_opt:
       - "label=disable"
 
@@ -532,6 +556,13 @@ services:
         "-c",
         "/app/bin/migrate && /app/bin/supavisor eval \"$$(cat /etc/pooler/pooler.exs)\" && /app/bin/server"
       ]
+    networks:
+      - plant-network
+
+networks:
+  plant-network:
+    name: plant.io-network
+    external: true
 
 volumes:
   db-config:
