@@ -11,22 +11,18 @@ jobs:
       matrix:
         # List every folder that needs a Docker image
         include:
-          - service: client
+          - service: frontend
             image: frontend
             is_maven: false
-          - service: product-service
+          - service: products-service
             image: product-service
             is_maven: true
           - service: api-gateway
             image: api-gateway
             is_maven: true
-          - service: discovery-service
-            image: discovery-service
+          - service: discovery-server
+            image: discovery-server
             is_maven: true
-          - service: server # Adjust if your main server folder is named differently
-            image: main-server
-            is_maven: true
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
