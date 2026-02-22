@@ -28,11 +28,11 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build api-gateway
-      run: mvn -B package --file api-gateway/pom.xml
+      run: mvn -B test --file api-gateway/pom.xml
     - name: Build product-service
-      run: mvn -B package --file products-service/pom.xml
+      run: mvn -B test --file products-service/pom.xml
     - name: Build discovery-server
-      run: mvn -B package --file discovery-server/pom.xml
+      run: mvn -B test --file discovery-server/pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
