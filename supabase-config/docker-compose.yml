@@ -91,6 +91,7 @@ services:
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
     networks:
       - plant-network
+
   auth:
     container_name: supabase-auth
     image: supabase/gotrue:v2.184.0
@@ -175,6 +176,7 @@ services:
       # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
     networks:
       - plant-network
+
   rest:
     container_name: supabase-rest
     image: postgrest/postgrest:v14.1
@@ -199,6 +201,7 @@ services:
       ]
     networks:
       - plant-network
+
   realtime:
     # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
     container_name: realtime-dev.supabase-realtime
@@ -239,6 +242,7 @@ services:
       RUN_JANITOR: "true"
     networks:
       - plant-network
+
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   storage:
     container_name: supabase-storage
@@ -283,6 +287,8 @@ services:
       GLOBAL_S3_BUCKET: stub
       ENABLE_IMAGE_TRANSFORMATION: "true"
       IMGPROXY_URL: http://imgproxy:5001
+    networks:
+      - plant-network
     networks:
       - plant-network
 
@@ -331,7 +337,6 @@ services:
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
     networks:
       - plant-network
-
   functions:
     container_name: supabase-edge-functions
     image: supabase/edge-runtime:v1.69.28
@@ -497,6 +502,8 @@ services:
         "--config",
         "/etc/vector/vector.yml"
       ]
+    networks:
+      - plant-network
     security_opt:
       - "label=disable"
 
@@ -558,9 +565,8 @@ services:
 
 networks:
   plant-network:
-    external: true
     name: plant.io-network
-    driver: bridge
+    external: true
 
 volumes:
   db-config:
