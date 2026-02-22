@@ -4,7 +4,7 @@ include:
 services:
   discovery-server:
     container_name: discovery-server
-    image: amaan1234567/plant.io/discovery-server:latest
+    image: plantio1/discovery-server:latest
     ports:
       - "8761:8761"
     restart: unless-stopped
@@ -24,7 +24,7 @@ services:
   
   product-service:
     container_name: product-service
-    image: amaan1234567/plant.io/product-service:latest
+    image: plantio1/product-service:latest
     ports:
       - "8081:8081"
     restart: unless-stopped
@@ -51,7 +51,7 @@ services:
 
   api-gateway:
     container_name: api-gateway
-    image: amaan1234567/plant.io/api-gateway:latest
+    image: plantio1/api-gateway:latest
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
         condition: service_healthy
   frontend:
     container_name: frontend
-    image: amaan1234567/plant.io/frontend:latest
+    image: plantio1/frontend:latest
     ports:
       - "3000:3000"
     restart: unless-stopped
