@@ -1,0 +1,168 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+app:
+  jwt-secret: ${SUPABASE_JWT_SECRET}
+
+spring:
+  security:
+    oauth2:
+      resourceserver: {}
+
+  r2dbc:
+    url: r2dbc:postgresql://supabase-pooler:6543/postgres?
+    username: postgres.your-tenant-id
+    password: ${SUPABASE_DB_PASSWORD}
+
+  cloud:
+    gateway:
+      routes:
+        # ─── Products ───────────────────────────────────────────
+        - id: products-get
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=GET
+
+        - id: products-create
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=POST
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "products.create"
+
+        - id: products-update
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "products.update"
+
+        - id: products-delete
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=DELETE
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "products.delete"
+
+        # ─── Orders (specific routes first) ─────────────────────
+        - id: orders-status-update
+          uri: lb://orders-service
+          predicates:
+            - Path=/orders/{id}/status
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.update_status"
+
+        - id: orders-my-get
+          uri: lb://orders-service
+          predicates:
+            - Path=/orders/my/**
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.view_own"
+
+        - id: orders-my-update
+          uri: lb://orders-service
+          predicates:
+            - Path=/orders/my/**
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.update_own"
+
+        - id: orders-all-get
+          uri: lb://orders-service
+          predicates:
+            - Path=/orders/**
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.view_all"
+
+        - id: orders-delete
+          uri: lb://orders-service
+          predicates:
+            - Path=/orders/**
+            - Method=DELETE
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.delete"
+
+        # ─── Users ──────────────────────────────────────────────
+        - id: users-get
+          uri: lb://users-service
+          predicates:
+            - Path=/users/**
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "users.view_all"
+
+        - id: users-update
+          uri: lb://users-service
+          predicates:
+            - Path=/users/**
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "users.update_any"
+
+        - id: users-delete
+          uri: lb://users-service
+          predicates:
+            - Path=/users/**
+            - Method=DELETE
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "users.delete_any"
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedHeaders: '*'
+            allowedMethods: '*'
+
+  application:
+    name: api-gateway
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+    fetch-registry: true
