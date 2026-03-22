@@ -17,6 +17,10 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres.your-tenant-id
     url: jdbc:postgresql://supabase-pooler:6543/postgres?currentSchema=orders_svc&prepareThreshold=0
+  jackson:
+    date-format: org.openapitools.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
 eureka:
   client:
     register-with-eureka: 'true'
@@ -26,4 +30,4 @@ eureka:
   instance:
     prefer-ip-address: 'true'
 server:
-  port: '8081'
+  port: '8085'
