@@ -1,0 +1,29 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          prepare_replacement: 'true'
+  application:
+    name: orders-service
+  datasource:
+    password: ${SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    username: postgres.your-tenant-id
+    url: jdbc:postgresql://supabase-pooler:6543/postgres?currentSchema=orders_svc&prepareThreshold=0
+eureka:
+  client:
+    register-with-eureka: 'true'
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+    fetch-registry: 'true'
+  instance:
+    prefer-ip-address: 'true'
+server:
+  port: '8081'
