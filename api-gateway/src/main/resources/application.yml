@@ -61,54 +61,77 @@ spring:
                 permission: "products.delete"
 
         # ─── Orders (specific routes first) ─────────────────────
-        - id: orders-status-update
+
+        - id: create order
           uri: lb://orders-service
           predicates:
-            - Path=/orders/{id}/status
-            - Method=PUT
+            - Path=/v1/orders/
+            - Method=POST
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.create_order"
+
+        - id: orders-by-order-id
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/{order_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.get_orders_by_order_id"
+
+        - id: order-items-by-order-id
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/items/{order_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.get_order_items_by_order_id"
+
+        - id: orders-by-user-id
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/user/{user_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.get_user_orders_by_user_id"
+
+        - id: order-update-address
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/address/
+            - Method=Put
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permission: "orders.update_address"
+        
+        - id: order-update-status
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/status/
+            - Method=Put
           filters:
             - TokenRelay
             - name: PermissionAuth
               args:
                 permission: "orders.update_status"
 
-        - id: orders-my-get
-          uri: lb://orders-service
-          predicates:
-            - Path=/orders/my/**
-            - Method=GET
-          filters:
-            - TokenRelay
-            - name: PermissionAuth
-              args:
-                permission: "orders.view_own"
-
-        - id: orders-my-update
-          uri: lb://orders-service
-          predicates:
-            - Path=/orders/my/**
-            - Method=PUT
-          filters:
-            - TokenRelay
-            - name: PermissionAuth
-              args:
-                permission: "orders.update_own"
-
-        - id: orders-all-get
-          uri: lb://orders-service
-          predicates:
-            - Path=/orders/**
-            - Method=GET
-          filters:
-            - TokenRelay
-            - name: PermissionAuth
-              args:
-                permission: "orders.view_all"
-
         - id: orders-delete
           uri: lb://orders-service
           predicates:
-            - Path=/orders/**
+            - Path=/v1/orders/**
             - Method=DELETE
           filters:
             - TokenRelay

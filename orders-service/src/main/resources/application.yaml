@@ -19,8 +19,8 @@ spring:
     url: jdbc:postgresql://supabase-pooler:6543/postgres?currentSchema=orders_svc&prepareThreshold=0
   jackson:
     date-format: org.openapitools.RFC3339DateFormat
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
+    datetype:
+      write-dates-as-timestamps: false
 eureka:
   client:
     register-with-eureka: 'true'
@@ -29,5 +29,7 @@ eureka:
     fetch-registry: 'true'
   instance:
     prefer-ip-address: 'true'
+springdoc:
+  enable-native-support: true
 server:
   port: '8085'

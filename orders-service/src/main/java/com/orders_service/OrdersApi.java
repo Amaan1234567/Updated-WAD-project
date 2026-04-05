@@ -5,33 +5,20 @@
  */
 package com.orders_service;
 
-import com.orders_service.Order;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.util.Optional;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-22T23:15:29.240830294+05:30[Asia/Kolkata]", comments = "Generator version: 7.20.0")
 @Validated
@@ -43,6 +30,7 @@ public interface OrdersApi {
     }
 
     String PATH_ORDERS_ORDER_ID_DELETE = "/orders/{order_id}";
+
     /**
      * DELETE /orders/{order_id} : delete a order based on id
      *
@@ -51,28 +39,20 @@ public interface OrdersApi {
      *         or Not Found (status code 404)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "ordersOrderIdDelete",
-        summary = "delete a order based on id",
-        responses = {
+    @Operation(operationId = "ordersOrderIdDelete", summary = "delete a order based on id", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = OrdersApi.PATH_ORDERS_ORDER_ID_DELETE
-    )
+    })
+    @RequestMapping(method = RequestMethod.DELETE, value = OrdersApi.PATH_ORDERS_ORDER_ID_DELETE)
     default ResponseEntity<Void> ordersOrderIdDelete(
-        @NotNull @Parameter(name = "order_id", description = "Numeric id of order to delete", required = true, in = ParameterIn.PATH) @PathVariable("order_id") Integer orderId
-    ) {
+            @NotNull @Parameter(name = "order_id", description = "Numeric id of order to delete", required = true, in = ParameterIn.PATH) @PathVariable("order_id") Long orderId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
-
     String PATH_ORDERS_ORDER_ID_GET = "/orders/{order_id}";
+
     /**
      * GET /orders/{order_id} : Get a order based on id
      *
@@ -81,87 +61,112 @@ public interface OrdersApi {
      *         or Not Found (status code 404)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "ordersOrderIdGet",
-        summary = "Get a order based on id",
-        responses = {
+    @Operation(operationId = "ordersOrderIdGet", summary = "Get a order based on id", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = OrdersApi.PATH_ORDERS_ORDER_ID_GET
-    )
-    default ResponseEntity<Void> ordersOrderIdGet(
-        @NotNull @Parameter(name = "order_id", description = "Numeric id of order to get", required = true, in = ParameterIn.PATH) @PathVariable("order_id") Integer orderId
-    ) {
+    })
+    @RequestMapping(method = RequestMethod.GET, value = OrdersApi.PATH_ORDERS_ORDER_ID_GET)
+    default ResponseEntity<?> ordersOrderIdGet(
+            @NotNull @Parameter(name = "order_id", description = "Numeric id of order to get", required = true, in = ParameterIn.PATH) @PathVariable("order_id") Long orderId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
+    String PATH_ORDERS_ORDER_ID_ITEMS_GET = "/orders/items/{order_id}";
 
-    String PATH_ORDERS_POST = "/orders/";
     /**
-     * POST /orders/ : create an order
+     * GET /orders/{order_id} : Get a order based on id
      *
-     * @param order  (required)
-     * @return OK (status code 200)
-     *         or Server Error (status code 500)
-     */
-    @Operation(
-        operationId = "ordersPost",
-        summary = "create an order",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = OrdersApi.PATH_ORDERS_POST,
-        consumes = { "application/json" }
-    )
-    default ResponseEntity<Void> ordersPost(
-        @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody Order order
-    ) {
-        return new ResponseEntity<>(HttpStatus.OK);
-
-    }
-
-
-    String PATH_ORDERS_PUT = "/orders/";
-    /**
-     * PUT /orders/
-     *
-     * @param order  (required)
+     * @param orderId Numeric id of order to get (required)
      * @return OK (status code 200)
      *         or Not Found (status code 404)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "ordersPut",
-        responses = {
+    @Operation(operationId = "ordersOrderIditemsGet", summary = "Get a order's Items based on id", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.PUT,
-        value = OrdersApi.PATH_ORDERS_PUT,
-        consumes = { "application/json" }
-    )
-    default ResponseEntity<Void> ordersPut(
-        @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody Order order
-    ) {
+    })
+    @RequestMapping(method = RequestMethod.GET, value = OrdersApi.PATH_ORDERS_ORDER_ID_ITEMS_GET)
+    default ResponseEntity<?> ordersOrderIdItemsGet(
+            @NotNull @Parameter(name = "order_id", description = "Numeric id of order to get", required = true, in = ParameterIn.PATH) @PathVariable("order_id") Long orderId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
+    String PATH_ORDERS_POST = "/orders/";
+
+    /**
+     * POST /orders/ : create an order
+     *
+     * @param order (required)
+     * @return OK (status code 200)
+     *         or Server Error (status code 500)
+     */
+    @Operation(operationId = "ordersPost", summary = "create an order", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "500", description = "Server Error"),
+            @ApiResponse(responseCode = "412", description = """
+One of the following conditions failed
+1. subtotal != price_per_unit*quantity for one of the records
+2. sum of subtotals is not equal to the total provided for the order
+3. product id has repeated for the items in orderItems array passed
+        """)
+    })
+    @RequestMapping(method = RequestMethod.POST, value = OrdersApi.PATH_ORDERS_POST, consumes = { "application/json" })
+    default ResponseEntity<Void> ordersPost(
+            @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody Order order) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+    String PATH_ORDERS_PUT = "/orders/";
+
+    /**
+     * PUT /orders/
+     *
+     * @param order (required)
+     * @return OK (status code 200)
+     *         or Not Found (status code 404)
+     *         or Server Error (status code 500)
+     */
+    @Operation(operationId = "ordersPut", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "500", description = "Server Error")
+    })
+    @RequestMapping(method = RequestMethod.PUT, value = OrdersApi.PATH_ORDERS_PUT, consumes = { "application/json" })
+    default ResponseEntity<Void> ordersPut(
+            @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody OrderUpdateStatus orderUpdateStatus) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+    String PATH_ORDERS_UPDATE_ADDRESS = "/orders/address";
+
+    /**
+     * PUT /orders/address
+     *
+     * @param order (required)
+     * @return OK (status code 200)
+     *         or Not Found (status code 404)
+     *         or Server Error (status code 500)
+     */
+    @Operation(operationId = "ordersPut", responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "500", description = "Server Error")
+    })
+    @RequestMapping(method = RequestMethod.PUT, value = OrdersApi.PATH_ORDERS_UPDATE_ADDRESS)
+    default ResponseEntity<Void> ordersUpdateAddress(
+            @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody OrderUpdateAddress orderUpdateAddress) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
 
     String PATH_ORDERS_USER_USER_ID_GET = "/orders/user/{user_id}";
+
     /**
      * GET /orders/user/{user_id} : Get a users Orders
      *
@@ -170,22 +175,14 @@ public interface OrdersApi {
      *         or Not Found (status code 404)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "ordersUserUserIdGet",
-        summary = "Get a users Orders",
-        responses = {
+    @Operation(operationId = "ordersUserUserIdGet", summary = "Get a users Orders", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = OrdersApi.PATH_ORDERS_USER_USER_ID_GET
-    )
-    default ResponseEntity<Void> ordersUserUserIdGet(
-        @NotNull @Parameter(name = "user_id", description = "Numeric id of user whose orders to get", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Integer userId
-    ) {
+    })
+    @RequestMapping(method = RequestMethod.GET, value = OrdersApi.PATH_ORDERS_USER_USER_ID_GET)
+    default ResponseEntity<?> ordersUserUserIdGet(
+            @NotNull @Parameter(name = "user_id", description = "Numeric id of user whose orders to get", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

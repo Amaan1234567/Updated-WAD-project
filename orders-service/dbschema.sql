@@ -14,7 +14,8 @@ CREATE TABLE orders_svc.orders (
     total_amount DECIMAL(10,2) NOT NULL,
     order_status orders_svc.order_status_type not null default 'PENDING_PAYMENT'::orders_svc.order_status_type,
     delivery_address TEXT NOT NULL,
-    payment_details jsonb NOT NULL
+    payment_details jsonb NOT NULL,
+    delivery_date TIMESTAMPTZ 
 );
 
 
@@ -24,5 +25,7 @@ CREATE TABLE orders_svc.order_items (
     quantity INT NOT NULL,
     price_per_unit DECIMAL(10,2) NOT NULL,
     subtotal DECIMAL(10,2) NOT NULL,
-    PRIMARY KEY (order_id, product_id)
+    PRIMARY KEY (order_id, product_id),
+    CONSTRAINT check_subtotal 
+    CHECK (subtotal = price_per_unit * quantity);
 );

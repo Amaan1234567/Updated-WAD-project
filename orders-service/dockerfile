@@ -1,0 +1,13 @@
+from eclipse-temurin:21-jre-ubi9-minimal
+
+arg JAR_FILE=target/*.jar
+workdir /opt/plant.io/orders-service
+
+copy ${JAR_FILE} ./orders-service.jar
+
+expose 8085
+
+run useradd orders-service
+user orders-service
+
+cmd ["java","-jar","orders-service.jar"]

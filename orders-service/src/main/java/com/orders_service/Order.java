@@ -1,43 +1,66 @@
 package com.orders_service;
 
-import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.orders_service.OrderItem;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.jspecify.annotations.Nullable;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
-import java.util.*;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 /**
  * Order
  */
 
+@Table(name = "orders", schema = "orders_svc", indexes = {
+    @Index(name = "order_id_index", columnList = "orderId")
+})
+@Entity
 @JsonTypeName("order")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-22T23:15:29.240830294+05:30[Asia/Kolkata]", comments = "Generator version: 7.20.0")
 public class Order {
 
-  private Integer orderId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "order_id_generator")
+  @SequenceGenerator(name = "order_id_generator", sequenceName = "id_gen", schema = "orders_svc", allocationSize = 10)
+  private Long orderId;
 
-  private Integer customerId;
+  @Column(name = "customer_id")
+  private Long customerId;
 
+  @CreationTimestamp
+  @Column(name = "order_date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private @Nullable OffsetDateTime orderDate;
+  private OffsetDateTime orderDate;
 
+  @Column(name = "total_amount")
   private Double totalAmount;
 
   /**
@@ -45,13 +68,13 @@ public class Order {
    */
   public enum OrderStatusEnum {
     PENDING_PAYMENT("PENDING_PAYMENT"),
-    
+
     CONFIRMED("CONFIRMED"),
-    
+
     SHIPPED("SHIPPED"),
-    
+
     DELIVERED("DELIVERED"),
-    
+
     CANCELLED("CANCELLED");
 
     private final String value;
@@ -81,12 +104,23 @@ public class Order {
     }
   }
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "order_status", columnDefinition = "orders_svc.order_status_type", nullable = false)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   private OrderStatusEnum orderStatus;
 
+  @Column(name = "delivery_address")
   private String deliveryAddress;
 
+  @Column(name = "payment_details")
+  @JdbcTypeCode(SqlTypes.JSON)
   private Object paymentDetails;
 
+  @Column(name = "delivery_date")
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private @Nullable OffsetDateTime deliveryDate;
+
+  @OneToMany(fetch = FetchType.EAGER,mappedBy = "orderId", cascade = CascadeType.ALL,orphanRemoval = true)
   @Valid
   private List<@Valid OrderItem> orderItems = new ArrayList<>();
 
@@ -97,52 +131,55 @@ public class Order {
   /**
    * Constructor with only required parameters
    */
-  public Order(Integer orderId, Integer customerId, Double totalAmount, OrderStatusEnum orderStatus, String deliveryAddress, Object paymentDetails) {
+  public Order(Long orderId, Long customerId, Double totalAmount, OrderStatusEnum orderStatus, String deliveryAddress,
+      Object paymentDetails, OffsetDateTime deliveryDate) {
     this.orderId = orderId;
     this.customerId = customerId;
     this.totalAmount = totalAmount;
     this.orderStatus = orderStatus;
     this.deliveryAddress = deliveryAddress;
     this.paymentDetails = paymentDetails;
+    this.deliveryDate = deliveryDate;
   }
 
-  public Order orderId(Integer orderId) {
+  public Order orderId(Long orderId) {
     this.orderId = orderId;
     return this;
   }
 
   /**
    * Get orderId
+   * 
    * @return orderId
    */
-  @NotNull 
-  @Schema(name = "order_id", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "order_id", example = "10", accessMode = Schema.AccessMode.READ_ONLY)
   @JsonProperty("order_id")
-  public Integer getOrderId() {
+  public Long getOrderId() {
     return orderId;
   }
 
-  public void setOrderId(Integer orderId) {
+  public void setOrderId(Long orderId) {
     this.orderId = orderId;
   }
 
-  public Order customerId(Integer customerId) {
+  public Order customerId(Long customerId) {
     this.customerId = customerId;
     return this;
   }
 
   /**
    * Get customerId
+   * 
    * @return customerId
    */
-  @NotNull 
+  @NotNull
   @Schema(name = "customer_id", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("customer_id")
-  public Integer getCustomerId() {
+  public Long getCustomerId() {
     return customerId;
   }
 
-  public void setCustomerId(Integer customerId) {
+  public void setCustomerId(Long customerId) {
     this.customerId = customerId;
   }
 
@@ -153,17 +190,34 @@ public class Order {
 
   /**
    * Get orderDate
+   * 
    * @return orderDate
    */
-  @Valid 
+  @Valid
   @Schema(name = "order_date", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("order_date")
-  public @Nullable OffsetDateTime getOrderDate() {
+  public OffsetDateTime getOrderDate() {
     return orderDate;
   }
 
-  public void setOrderDate(@Nullable OffsetDateTime orderDate) {
+  public void setOrderDate(OffsetDateTime orderDate) {
     this.orderDate = orderDate;
+  }
+
+  /**
+   * Get deliveryDate
+   * 
+   * @return deliveryDate
+   */
+  @Valid
+  @Schema(name = "delivery_date", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("delivery_date")
+  public @Nullable OffsetDateTime getDeliveryDate() {
+    return deliveryDate;
+  }
+
+  public void setDeliveryDate(@Nullable OffsetDateTime deliveryDate) {
+    this.deliveryDate = deliveryDate;
   }
 
   public Order totalAmount(Double totalAmount) {
@@ -174,9 +228,11 @@ public class Order {
   /**
    * Get totalAmount
    * minimum: 0
+   * 
    * @return totalAmount
    */
-  @NotNull @DecimalMin(value = "0", inclusive = false) 
+  @NotNull
+  @DecimalMin(value = "0", inclusive = false)
   @Schema(name = "total_amount", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("total_amount")
   public Double getTotalAmount() {
@@ -194,9 +250,10 @@ public class Order {
 
   /**
    * Get orderStatus
+   * 
    * @return orderStatus
    */
-  @NotNull 
+  @NotNull
   @Schema(name = "order_status", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("order_status")
   public OrderStatusEnum getOrderStatus() {
@@ -214,10 +271,10 @@ public class Order {
 
   /**
    * Get deliveryAddress
+   * 
    * @return deliveryAddress
    */
-  @NotNull 
-  @Schema(name = "delivery_address", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "delivery_address", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("delivery_address")
   public String getDeliveryAddress() {
     return deliveryAddress;
@@ -234,9 +291,10 @@ public class Order {
 
   /**
    * json payment details returned from payment api
+   * 
    * @return paymentDetails
    */
-  @NotNull 
+  @NotNull
   @Schema(name = "payment_details", description = "json payment details returned from payment api", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("payment_details")
   public Object getPaymentDetails() {
@@ -262,9 +320,10 @@ public class Order {
 
   /**
    * Get orderItems
+   * 
    * @return orderItems
    */
-  @Valid 
+  @Valid
   @Schema(name = "order_items", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("order_items")
   public List<@Valid OrderItem> getOrderItems() {
@@ -273,6 +332,39 @@ public class Order {
 
   public void setOrderItems(List<@Valid OrderItem> orderItems) {
     this.orderItems = orderItems;
+  }
+
+  public boolean validate_total_check() {
+    float sum = 0.0f;
+    for (OrderItem item : this.orderItems) {
+      sum += item.getSubtotal();
+    }
+    if (sum != this.totalAmount) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  public boolean validate_product_id_uniqueness() {
+    HashSet<Long> set = new HashSet<Long>();
+    for (OrderItem item : this.orderItems) {
+      if (set.contains(item.getProductId())) {
+        return false;
+      } else {
+        set.add(item.getProductId());
+      }
+    }
+    return true;
+  }
+
+  public boolean validate_subtotal_check() {
+    for (OrderItem item : this.orderItems) {
+      if (item.getQuantity() * item.getPricePerUnit() != item.getSubtotal()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
@@ -296,7 +388,8 @@ public class Order {
 
   @Override
   public int hashCode() {
-    return Objects.hash(orderId, customerId, orderDate, totalAmount, orderStatus, deliveryAddress, paymentDetails, orderItems);
+    return Objects.hash(orderId, customerId, orderDate, totalAmount, orderStatus, deliveryAddress, paymentDetails,
+        orderItems);
   }
 
   @Override
@@ -326,4 +419,3 @@ public class Order {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

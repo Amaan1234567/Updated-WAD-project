@@ -1,37 +1,46 @@
 package com.orders_service;
 
-import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import org.jspecify.annotations.Nullable;
+import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-import java.util.*;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 /**
  * OrderItem
  */
 
+@Entity
+@Table(name = "order_items", schema = "orders_svc", indexes = {
+    @Index(name = "order_and_product_id_composite_index", columnList = "orderId,productId"),
+    @Index(name = "order_id_composite_index", columnList = "orderId")  
+})
+@IdClass(OrderItemKey.class)
 @JsonTypeName("order_item")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-22T23:15:29.240830294+05:30[Asia/Kolkata]", comments = "Generator version: 7.20.0")
 public class OrderItem {
 
-  private Integer orderId;
-
-  private Integer productId;
-
+  @Id
+  @Column(name = "order_id")
+  private Long orderId;
+  @Id
+  @Column(name = "product_id")
+  private Long productId;
+  @Column(name = "quantity")
   private Integer quantity;
-
+  @Column(name = "price_per_unit")
   private Double pricePerUnit;
-
+  @Column(name = "subtotal")
   private Double subtotal;
 
   public OrderItem() {
@@ -41,7 +50,7 @@ public class OrderItem {
   /**
    * Constructor with only required parameters
    */
-  public OrderItem(Integer orderId, Integer productId, Integer quantity, Double pricePerUnit, Double subtotal) {
+  public OrderItem(Long orderId, Long productId, Integer quantity, Double pricePerUnit, Double subtotal) {
     this.orderId = orderId;
     this.productId = productId;
     this.quantity = quantity;
@@ -49,7 +58,7 @@ public class OrderItem {
     this.subtotal = subtotal;
   }
 
-  public OrderItem orderId(Integer orderId) {
+  public OrderItem orderId(Long orderId) {
     this.orderId = orderId;
     return this;
   }
@@ -57,19 +66,19 @@ public class OrderItem {
   /**
    * Get orderId
    * @return orderId
-   */
-  @NotNull 
-  @Schema(name = "order_id", requiredMode = Schema.RequiredMode.REQUIRED)
+   */ 
+
+  @Schema(name = "order_id", example = "10", accessMode = Schema.AccessMode.READ_ONLY)
   @JsonProperty("order_id")
-  public Integer getOrderId() {
+  public Long getOrderId() {
     return orderId;
   }
 
-  public void setOrderId(Integer orderId) {
+  public void setOrderId(Long orderId) {
     this.orderId = orderId;
   }
 
-  public OrderItem productId(Integer productId) {
+  public OrderItem productId(Long productId) {
     this.productId = productId;
     return this;
   }
@@ -81,11 +90,11 @@ public class OrderItem {
   @NotNull 
   @Schema(name = "product_id", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("product_id")
-  public Integer getProductId() {
+  public Long getProductId() {
     return productId;
   }
 
-  public void setProductId(Integer productId) {
+  public void setProductId(Long productId) {
     this.productId = productId;
   }
 
