@@ -2,32 +2,32 @@ include:
   - supabase-config/docker-compose.yml
 
 services:
-  # orders-service:
-  #   container_name: orders-service
-  #   image: plantio1/orders-service:latest
-  #   ports:
-  #     - "8085:8085"
-  #   restart: unless-stopped
-  #   healthcheck:
-  #     test:
-  #       [
-  #         "CMD",
-  #         "curl",
-  #         "-sSfL",
-  #         "--head",
-  #         "-o",
-  #         "/dev/null",
-  #         "http://localhost:8085/actuator/health"
-  #       ]
-  #     timeout: 60s
-  #     interval: 5s
-  #     retries: 12
-  #   # depends_on:
-  #   #   supabase-pooler:
-  #   #     condition: service_healthy
-  #   networks:
-  #     - plant-network
-  #   env_file: "orders-service/.env"
+  orders-service:
+    container_name: orders-service
+    image: plantio1/orders-service:latest
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-sSfL",
+          "--head",
+          "-o",
+          "/dev/null",
+          "http://localhost:8085/actuator/health"
+        ]
+      timeout: 60s
+      interval: 5s
+      retries: 12
+    # depends_on:
+    #   supabase-pooler:
+    #     condition: service_healthy
+    networks:
+      - plant-network
+    env_file: "orders-service/.env"
 
   discovery-server:
     container_name: discovery-server

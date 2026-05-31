@@ -1,5 +1,8 @@
 package com.api_gateway;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -38,8 +41,11 @@ public class PermissionAuthGatewayFilterFactory
                     .flatMap(jwt -> {
                         String userRole = jwt.getClaimAsString("user_role");
                         String userId = jwt.getSubject();
-
-                        if (!permissionCache.hasPermission(userRole, userId, config.getPermission())) {
+                        boolean hasAtleastOnePermission = false;
+                        for (String permission : config.getPermissions()) {
+                            hasAtleastOnePermission = hasAtleastOnePermission || permissionCache.hasPermission(userRole, userId, permission);
+                        }
+                        if (!hasAtleastOnePermission) {
                             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                             return exchange.getResponse().setComplete();
                         }
@@ -58,14 +64,14 @@ public class PermissionAuthGatewayFilterFactory
     }
 
     public static class Config {
-        private String permission;
+        private List<String> permissions = new ArrayList<>();
 
-        public String getPermission() {
-            return permission;
+        public List<String> getPermissions() {
+            return permissions;
         }
 
-        public void setPermission(String permission) {
-            this.permission = permission;
+        public void setPermissions(List<String> permissions) {
+            this.permissions = permissions;
         }
     }
 }

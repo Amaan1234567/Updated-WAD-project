@@ -105,9 +105,9 @@ public class Order {
   }
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "order_status", columnDefinition = "orders_svc.order_status_type", nullable = false)
+  @Column(name = "order_status", columnDefinition = "orders_svc.order_status_type", nullable = true)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-  private OrderStatusEnum orderStatus;
+  private OrderStatusEnum orderStatus = OrderStatusEnum.PENDING_PAYMENT;
 
   @Column(name = "delivery_address")
   private String deliveryAddress;
@@ -253,7 +253,6 @@ public class Order {
    * 
    * @return orderStatus
    */
-  @NotNull
   @Schema(name = "order_status", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("order_status")
   public OrderStatusEnum getOrderStatus() {

@@ -36,7 +36,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "products.create"
+                permissions: "products.create"
 
         - id: products-update
           uri: lb://products-service
@@ -47,7 +47,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "products.update"
+                permissions: "products.update"
 
         - id: products-delete
           uri: lb://products-service
@@ -58,9 +58,15 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "products.delete"
+                permissions: "products.delete"
 
         # ─── Orders (specific routes first) ─────────────────────
+        # - id: orders-service
+        #   uri: lb://orders-service
+        #   predicates:
+        #     - Path=/v1/orders/**
+        #   filters:
+        #     - SetRequestHeader=X-User-UUID, #{principal.claims['sub']}
 
         - id: create order
           uri: lb://orders-service
@@ -71,7 +77,8 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.create_order"
+                permissions: 
+                - "orders.create_order"
 
         - id: orders-by-order-id
           uri: lb://orders-service
@@ -82,7 +89,8 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.get_orders_by_order_id"
+                permissions: 
+                - "orders.get_orders_by_order_id"
 
         - id: order-items-by-order-id
           uri: lb://orders-service
@@ -93,7 +101,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.get_order_items_by_order_id"
+                permissions: "orders.get_order_items_by_order_id"
 
         - id: orders-by-user-id
           uri: lb://orders-service
@@ -104,7 +112,10 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.get_user_orders_by_user_id"
+                permissions: 
+                - "orders.view_own"
+                - "orders.get_user_orders_by_user_id"
+                - "orders.view_all"
 
         - id: order-update-address
           uri: lb://orders-service
@@ -115,7 +126,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.update_address"
+                permissions: "orders.update_address"
         
         - id: order-update-status
           uri: lb://orders-service
@@ -126,7 +137,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.update_status"
+                permissions: "orders.update_status"
 
         - id: orders-delete
           uri: lb://orders-service
@@ -137,7 +148,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "orders.delete"
+                permissions: "orders.delete"
 
         # ─── Users ──────────────────────────────────────────────
         - id: users-get
@@ -149,7 +160,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "users.view_all"
+                permissions: "users.view_all"
 
         - id: users-update
           uri: lb://users-service
@@ -160,7 +171,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "users.update_any"
+                permissions: "users.update_any"
 
         - id: users-delete
           uri: lb://users-service
@@ -171,7 +182,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permission: "users.delete_any"
+                permissions: "users.delete_any"
 
       globalcors:
         corsConfigurations:

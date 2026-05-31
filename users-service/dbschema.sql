@@ -14,3 +14,11 @@ CREATE TABLE users_svc.users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+
+-- Allow the role to access the users_svc schema
+GRANT USAGE ON SCHEMA users_svc TO authenticated;
+
+-- Allow the role to read from the users table for the mapping check
+GRANT SELECT ON users_svc.users TO authenticated;

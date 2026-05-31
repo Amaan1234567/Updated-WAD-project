@@ -29,3 +29,43 @@ CREATE TABLE orders_svc.order_items (
     CONSTRAINT check_subtotal 
     CHECK (subtotal = price_per_unit * quantity);
 );
+
+
+-- Allow the role to see the schema
+GRANT USAGE ON SCHEMA orders_svc TO authenticated;
+
+-- Allow the role to select/insert/update rows in the table
+GRANT SELECT, INSERT, UPDATE, DELETE ON orders_svc.orders TO authenticated;
+
+-- If you have a join or foreign key to order_items, grant that too
+GRANT SELECT, INSERT, UPDATE, DELETE ON orders_svc.order_items TO authenticated;
+
+-- Grant permission on the sequence used by the 'orders' table
+GRANT USAGE, SELECT ON SEQUENCE orders_svc.id_gen TO authenticated;
+
+-- Create the role and user
+CREATE ROLE orders_svc_role NOINHERIT;
+CREATE USER orders_svc_app WITH PASSWORD 'your-strong-password-here' IN ROLE orders_svc_role;
+
+-- Orders schema permissions
+GRANT USAGE ON SCHEMA orders_svc TO orders_svc_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA orders_svc TO orders_svc_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA orders_svc TO orders_svc_app;
+
+-- Users schema (read-only, needed for RLS policy lookups)
+GRANT USAGE ON SCHEMA users_svc TO orders_svc_app;
+GRANT SELECT ON users_svc.users TO orders_svc_app;
+
+-- Ensure future tables also get permissions
+ALTER DEFAULT PRIVILEGES IN SCHEMA orders_svc
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO orders_svc_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA orders_svc
+    GRANT USAGE, SELECT ON SEQUENCES TO orders_svc_app;
+
+-- RLS: make sure the policy applies to this role
+ALTER POLICY "Enable users to view their own data only"
+ON "orders_svc"."orders"
+TO anon, authenticated, postgres, orders_svc_app;
+
+-- Make RLS work even if connecting through pooler as superuser
+ALTER TABLE orders_svc.orders FORCE ROW LEVEL SECURITY;

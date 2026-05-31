@@ -1,6 +1,7 @@
 package com.api_gateway;
 
 import jakarta.annotation.PostConstruct;
+
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class PermissionCacheService {
                 .subscribe(); // non-blocking, fire and forget
     }
 
-    @Scheduled(fixedDelay = 300000) // refresh every 5 minutes
+    @Scheduled(fixedDelay = 5*1000) // refresh every 5 seconds
     public Mono<Void> refreshCache() {
         return Mono.zip(
                 loadRolePermissions(),
@@ -75,9 +76,16 @@ public class PermissionCacheService {
 
     public boolean hasPermission(String role, String userId, String permission) {
         // Check via role
+        System.out.println("permission being checked: "+permission);
+        System.out.println("role: "+role);
         Set<String> rolePerms = rolePermissionsCache.getOrDefault(role, Set.of());
         if (rolePerms.contains(permission))
             return true;
+        System.out.println("roles found for role: "+role);
+        for (String val : rolePerms) {
+            System.out.println(val);
+        }
+        System.out.println("could not found in default permissions checking custom role");
 
         // Check via direct user permission override (handles custom role)
         Set<String> userPerms = userPermissionsCache.getOrDefault(userId, Set.of());
