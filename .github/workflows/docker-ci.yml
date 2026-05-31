@@ -21,7 +21,7 @@ jobs:
             image: api-gateway
             is_maven: true
           - service: orders-service
-            image: api-gateway
+            image: orders-service
             is_maven: true  
           - service: discovery-server
             image: discovery-server
