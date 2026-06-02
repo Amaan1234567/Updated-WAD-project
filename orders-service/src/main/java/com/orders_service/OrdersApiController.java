@@ -2,7 +2,9 @@ package com.orders_service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +20,13 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Generated;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -71,7 +75,14 @@ public class OrdersApiController implements OrdersApi {
     public ResponseEntity<Void> ordersPost(
             @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody Order order) {
         if (order.validate_subtotal_check() && order.validate_total_check() && order.validate_product_id_uniqueness()) {
-            orderService.createOrder(order); // This now saves everything safely
+            try {
+                orderService.createOrder(order); // This now saves everything safely
+            } catch (JpaSystemException e) {
+                if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
@@ -81,13 +92,31 @@ public class OrdersApiController implements OrdersApi {
 
     public ResponseEntity<Void> ordersPut(
             @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody OrderUpdateStatus orderUpdateStatus) {
-        orderService.updateOrder(orderUpdateStatus.getOrderId(), null, orderUpdateStatus.getOrderStatus());
+
+        try {
+            int rowsUpdated = orderService.updateOrder(orderUpdateStatus.getOrderId(), null,
+                    orderUpdateStatus.getOrderStatus());
+            if (rowsUpdated == 0) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+        } catch (JpaSystemException e) {
+            if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            } else {
+                System.out.println(e.getMessage());
+            }
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public ResponseEntity<Void> ordersUpdateAddress(
             @Parameter(name = "Order", description = "", required = true) @Valid @RequestBody OrderUpdateAddress orderAddressUpdate) {
-        OrderStatusEnum orderStatus = orderService.getOrderById(orderAddressUpdate.getOrderId()).getOrderStatus();
+        Order order = orderService.getOrderById(orderAddressUpdate.getOrderId());
+        if (order == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        OrderStatusEnum orderStatus = order.getOrderStatus();
         if (orderStatus == OrderStatusEnum.CONFIRMED || orderStatus == OrderStatusEnum.PENDING_PAYMENT) {
             orderService.updateOrder(orderAddressUpdate.getOrderId(), orderAddressUpdate.getOrderAddress(), null);
             return new ResponseEntity<>(HttpStatus.OK);

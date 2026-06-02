@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "SET delivery_address = COALESCE(:deliveryAddress, delivery_address), " +
             "    order_status = COALESCE(CAST(:orderStatus AS orders_svc.order_status_type), order_status) " +
             "WHERE order_id = :orderId", nativeQuery = true)
-    void updateOrder(@Param("orderId") Long orderId,
+    int updateOrder(@Param("orderId") Long orderId,
             @Param("deliveryAddress") String deliveryAddress,
             @Param("orderStatus") String orderStatus);
 }

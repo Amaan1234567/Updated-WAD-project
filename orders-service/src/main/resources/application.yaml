@@ -33,3 +33,5 @@ springdoc:
   enable-native-support: true
 server:
   port: '8085'
+logging:
+  request-body-enabled: false

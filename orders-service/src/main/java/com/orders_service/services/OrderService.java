@@ -1,8 +1,10 @@
 package com.orders_service.services;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.engine.jdbc.env.spi.SQLStateType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -68,11 +70,6 @@ public class OrderService {
     public Order createOrder(Order order) {
         setRlsContext();
 
-        Object currentClaims = entityManager.createNativeQuery(
-                "SELECT current_setting('request.jwt.claims', true)")
-                .getSingleResult();
-        System.out.println("Current JWT claims in transaction: " + currentClaims);
-
         List<OrderItem> items = order.getOrderItems();
         order.setOrderItems(new ArrayList<>());
 
@@ -80,7 +77,7 @@ public class OrderService {
 
         if (items != null) {
             for (OrderItem item : items) {
-                item.setOrderId(savedOrder.getOrderId());
+                item.setOrderId(order.getOrderId());
                 orderItemsRepository.save(item);
             }
         }
@@ -90,14 +87,16 @@ public class OrderService {
     }
 
     @Transactional
-    public void updateOrder(Long orderId, @Nullable String deliveryAddress, @Nullable OrderStatusEnum orderStatus) {
+    public int updateOrder(Long orderId, @Nullable String deliveryAddress, @Nullable OrderStatusEnum orderStatus) {
         setRlsContext();
 
         String orderStatusString = null;
         if (orderStatus != null) {
             orderStatusString = orderStatus.toString();
         }
-        orderRepository.updateOrder(orderId, deliveryAddress, orderStatusString);
+        int rowsUpdated = orderRepository.updateOrder(orderId, deliveryAddress, orderStatusString);
+
+        return rowsUpdated;
     }
 
     @Transactional

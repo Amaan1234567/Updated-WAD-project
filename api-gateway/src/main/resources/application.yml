@@ -90,7 +90,7 @@ spring:
             - name: PermissionAuth
               args:
                 permissions: 
-                - "orders.get_orders_by_order_id"
+                - "orders.get_order_by_order_id"
 
         - id: order-items-by-order-id
           uri: lb://orders-service
@@ -120,8 +120,8 @@ spring:
         - id: order-update-address
           uri: lb://orders-service
           predicates:
-            - Path=/v1/orders/address/
-            - Method=Put
+            - Path=/v1/orders/address
+            - Method=PUT
           filters:
             - TokenRelay
             - name: PermissionAuth
@@ -131,8 +131,8 @@ spring:
         - id: order-update-status
           uri: lb://orders-service
           predicates:
-            - Path=/v1/orders/status/
-            - Method=Put
+            - Path=/v1/orders/
+            - Method=PUT
           filters:
             - TokenRelay
             - name: PermissionAuth

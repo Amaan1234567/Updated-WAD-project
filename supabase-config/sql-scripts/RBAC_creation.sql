@@ -38,11 +38,13 @@ CREATE TABLE users_svc.role_permissions (
     PRIMARY KEY (role, permission)
 );
 
-CREATE TABLE users_svc.user_roles (
-    user_id  UUID                  REFERENCES auth.users(id) ON DELETE CASCADE,
-    role     users_svc.app_role     NOT NULL,
-    PRIMARY KEY (user_id, role)
-);
+create table users_svc.user_roles (
+  user_id uuid not null,
+  role users_svc.app_role not null default 'user'::users_svc.app_role,
+  constraint user_roles_pkey primary key (user_id),
+  constraint user_roles_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
+) TABLESPACE pg_default;
+
 
 CREATE TABLE users_svc.user_permissions (
     user_id    UUID                        REFERENCES auth.users(id) ON DELETE CASCADE,

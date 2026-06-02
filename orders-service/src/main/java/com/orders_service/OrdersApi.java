@@ -76,7 +76,7 @@ public interface OrdersApi {
     String PATH_ORDERS_ORDER_ID_ITEMS_GET = "/orders/items/{order_id}";
 
     /**
-     * GET /orders/{order_id} : Get a order based on id
+     * GET /orders/items/{order_id} : Get a order's items based on id
      *
      * @param orderId Numeric id of order to get (required)
      * @return OK (status code 200)

@@ -132,7 +132,7 @@ public class Order {
    * Constructor with only required parameters
    */
   public Order(Long orderId, Long customerId, Double totalAmount, OrderStatusEnum orderStatus, String deliveryAddress,
-      Object paymentDetails, OffsetDateTime deliveryDate) {
+      Object paymentDetails, OffsetDateTime deliveryDate,List<OrderItem> orderItems) {
     this.orderId = orderId;
     this.customerId = customerId;
     this.totalAmount = totalAmount;
@@ -140,6 +140,7 @@ public class Order {
     this.deliveryAddress = deliveryAddress;
     this.paymentDetails = paymentDetails;
     this.deliveryDate = deliveryDate;
+    this.orderItems = orderItems;
   }
 
   public Order orderId(Long orderId) {
