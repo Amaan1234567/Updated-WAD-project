@@ -335,7 +335,7 @@ public class Order {
   }
 
   public boolean validate_total_check() {
-    float sum = 0.0f;
+    double sum = 0.0f;
     for (OrderItem item : this.orderItems) {
       sum += item.getSubtotal();
     }
