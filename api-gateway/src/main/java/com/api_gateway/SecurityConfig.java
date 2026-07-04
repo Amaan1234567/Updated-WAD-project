@@ -11,15 +11,16 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-    
+
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .anyExchange().authenticated()).cors(Customizer.withDefaults())
+                        .anyExchange().authenticated())
+                .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults()) // Enable JWT-based authentication
+                        .jwt(Customizer.withDefaults()) // picks up your ReactiveJwtDecoder bean
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable);
         return http.build();

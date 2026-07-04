@@ -1,0 +1,158 @@
+openapi: "3.0.3"
+info:
+  title: Orders Api
+  version: "1.0"
+servers:
+  - url: http://orders-service/v1
+paths:
+  /orders/user/{user_id}:
+    get:
+      summary: Get a users Orders
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric id of user whose orders to get
+      responses:
+        "200":
+          description: "OK"
+        "404":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+
+  /orders/{order_id}:
+    get:
+      summary: Get a order based on id
+      parameters:
+        - in: path
+          name: order_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric id of order to get
+      responses:
+        "200":
+          description: "OK"
+        "404":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+    delete:
+      summary: delete a order based on id
+      parameters:
+        - in: path
+          name: order_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric id of order to delete
+      responses:
+        "200":
+          description: "OK"
+        "404":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+  /orders/:
+    post:
+      summary: create an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/order"
+      responses:
+        "200":
+          description: "OK"
+        "500":
+          description: "Server Error"
+    put:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/order"
+      responses:
+        "200":
+          description: "OK"
+        "404":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+
+components:
+  schemas:
+    order:
+      type: object
+      required:
+        - order_id
+        - customer_id
+        - order_status
+        - total_amount
+        - delivery_address
+        - payment_details
+      properties:
+        order_id:
+          type: integer
+          example: 10
+        customer_id:
+          type: integer
+          example: 10
+        order_date:
+          type: string
+          example: "2020-06-22 19:10:25-07"
+          format: date-time
+        total_amount:
+          type: number
+          format: double
+          minimum: 0
+          exclusiveMinimum: true
+        order_status:
+          type: string
+          enum:
+            [
+              "PENDING_PAYMENT",
+              "CONFIRMED",
+              "SHIPPED",
+              "DELIVERED",
+              "CANCELLED",
+            ]
+        delivery_address:
+          type: string
+        payment_details:
+          type: object
+          description: "json payment details returned from payment api"
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/order_item"
+    order_item:
+      type: object
+      required:
+        - order_id
+        - product_id
+        - quantity
+        - price_per_unit
+        - subtotal
+      properties:
+       order_id:
+        type: integer
+       product_id:
+        type: integer
+       quantity: 
+        type: integer
+       price_per_unit:
+        type: number
+        format: double
+        minimum: 0
+        exclusiveMinimum: true
+       subtotal:
+        type: number
+        format: double
+        minimum: 0
+        exclusiveMinimum: true

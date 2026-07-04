@@ -1,0 +1,202 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+app:
+  jwt-secret: ${SUPABASE_JWT_SECRET}
+
+spring:
+  security:
+    oauth2:
+      resourceserver: {}
+
+  r2dbc:
+    url: r2dbc:postgresql://supabase-pooler:6543/postgres?
+    username: postgres.your-tenant-id
+    password: ${SUPABASE_DB_PASSWORD}
+
+  cloud:
+    gateway:
+      routes:
+        # ─── Products ───────────────────────────────────────────
+        - id: products-get
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=GET
+
+        - id: products-create
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=POST
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "products.create"
+
+        - id: products-update
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "products.update"
+
+        - id: products-delete
+          uri: lb://products-service
+          predicates:
+            - Path=/products/**
+            - Method=DELETE
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "products.delete"
+
+        # ─── Orders (specific routes first) ─────────────────────
+        # - id: orders-service
+        #   uri: lb://orders-service
+        #   predicates:
+        #     - Path=/v1/orders/**
+        #   filters:
+        #     - SetRequestHeader=X-User-UUID, #{principal.claims['sub']}
+
+        - id: create order
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/
+            - Method=POST
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: 
+                - "orders.create_order"
+
+        - id: orders-by-order-id
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/{order_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: 
+                - "orders.get_order_by_order_id"
+
+        - id: order-items-by-order-id
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/items/{order_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "orders.get_order_items_by_order_id"
+
+        - id: orders-by-user-id
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/user/{user_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: 
+                - "orders.view_own"
+                - "orders.get_user_orders_by_user_id"
+                - "orders.view_all"
+
+        - id: order-update-address
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/address
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "orders.update_address"
+        
+        - id: order-update-status
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "orders.update_status"
+
+        - id: orders-delete
+          uri: lb://orders-service
+          predicates:
+            - Path=/v1/orders/**
+            - Method=DELETE
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "orders.delete"
+
+        # ─── Users ──────────────────────────────────────────────
+        - id: users-get
+          uri: lb://users-service
+          predicates:
+            - Path=/users/**
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "users.view_all"
+
+        - id: users-update
+          uri: lb://users-service
+          predicates:
+            - Path=/users/**
+            - Method=PUT
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "users.update_any"
+
+        - id: users-delete
+          uri: lb://users-service
+          predicates:
+            - Path=/users/**
+            - Method=DELETE
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: "users.delete_any"
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedHeaders: '*'
+            allowedMethods: '*'
+
+  application:
+    name: api-gateway
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+    fetch-registry: true

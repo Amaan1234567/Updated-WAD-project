@@ -2,9 +2,36 @@ include:
   - supabase-config/docker-compose.yml
 
 services:
+  orders-service:
+    container_name: orders-service
+    image: plantio1/orders-service:latest
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-sSfL",
+          "--head",
+          "-o",
+          "/dev/null",
+          "http://localhost:8085/actuator/health"
+        ]
+      timeout: 60s
+      interval: 5s
+      retries: 12
+    # depends_on:
+    #   supabase-pooler:
+    #     condition: service_healthy
+    networks:
+      - plant-network
+    env_file: "orders-service/.env"
+
   discovery-server:
     container_name: discovery-server
-    image: amaan1234567/plant.io/discovery-server:latest
+    image: plantio1/discovery-server:latest
     ports:
       - "8761:8761"
     restart: unless-stopped
@@ -24,7 +51,7 @@ services:
   
   product-service:
     container_name: product-service
-    image: amaan1234567/plant.io/product-service:latest
+    image: plantio1/product-service:latest
     ports:
       - "8081:8081"
     restart: unless-stopped
@@ -51,7 +78,7 @@ services:
 
   api-gateway:
     container_name: api-gateway
-    image: amaan1234567/plant.io/api-gateway:latest
+    image: plantio1/api-gateway:latest
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -66,6 +93,9 @@ services:
       timeout: 10s
       interval: 5s
       retries: 3
+    environment:
+      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
     networks:
       - plant-network
     depends_on:
@@ -73,7 +103,7 @@ services:
         condition: service_healthy
   frontend:
     container_name: frontend
-    image: amaan1234567/plant.io/frontend:latest
+    image: plantio1/frontend:latest
     ports:
       - "3000:3000"
     restart: unless-stopped
@@ -88,6 +118,7 @@ services:
       timeout: 10s
       interval: 5s
       retries: 3
+    env_file: "frontend/.env"
     networks:
       - plant-network
     depends_on:

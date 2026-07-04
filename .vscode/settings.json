@@ -1,6 +1,5 @@
 {
+    "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.compile.nullAnalysis.mode": "disabled",
-    "chat.disableAIFeatures": true,
-    "java.search.scope": "all"
+    "java.server.launchMode": "Standard",
 }

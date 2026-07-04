@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: Orders Api
+  version: "1.0"
+servers:
+- url: http://orders-service/v1
+paths:
+  /orders/user/{user_id}:
+    get:
+      parameters:
+      - description: Numeric id of user whose orders to get
+        explode: false
+        in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      summary: Get a users Orders
+      x-accepts:
+      - application/json
+  /orders/{order_id}:
+    delete:
+      parameters:
+      - description: Numeric id of order to delete
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      summary: delete a order based on id
+      x-accepts:
+      - application/json
+    get:
+      parameters:
+      - description: Numeric id of order to get
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      summary: Get a order based on id
+      x-accepts:
+      - application/json
+  /orders/:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/order"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Server Error
+      summary: create an order
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/order"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    order:
+      properties:
+        order_id:
+          example: 10
+          type: integer
+        customer_id:
+          example: 10
+          type: integer
+        order_date:
+          format: date-time
+          type: string
+        total_amount:
+          exclusiveMinimum: true
+          format: double
+          minimum: 0
+          type: number
+        order_status:
+          enum:
+          - PENDING_PAYMENT
+          - CONFIRMED
+          - SHIPPED
+          - DELIVERED
+          - CANCELLED
+          type: string
+        delivery_address:
+          type: string
+        payment_details:
+          description: json payment details returned from payment api
+          type: object
+        order_items:
+          items:
+            $ref: "#/components/schemas/order_item"
+          type: array
+      required:
+      - customer_id
+      - delivery_address
+      - order_id
+      - order_status
+      - payment_details
+      - total_amount
+      type: object
+    order_item:
+      properties:
+        order_id:
+          type: integer
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        price_per_unit:
+          exclusiveMinimum: true
+          format: double
+          minimum: 0
+          type: number
+        subtotal:
+          exclusiveMinimum: true
+          format: double
+          minimum: 0
+          type: number
+      required:
+      - order_id
+      - price_per_unit
+      - product_id
+      - quantity
+      - subtotal
+      type: object

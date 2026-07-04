@@ -1,0 +1,37 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          prepare_replacement: 'true'
+  application:
+    name: orders-service
+  datasource:
+    password: ${ORDERS_SVC_SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    username: orders_svc_app.your-tenant-id
+    url: jdbc:postgresql://supabase-pooler:6543/postgres?currentSchema=orders_svc&prepareThreshold=0
+  jackson:
+    date-format: org.openapitools.RFC3339DateFormat
+    datetype:
+      write-dates-as-timestamps: false
+eureka:
+  client:
+    register-with-eureka: 'true'
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+    fetch-registry: 'true'
+  instance:
+    prefer-ip-address: 'true'
+springdoc:
+  enable-native-support: true
+server:
+  port: '8085'
+logging:
+  request-body-enabled: false
