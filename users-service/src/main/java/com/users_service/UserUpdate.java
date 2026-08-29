@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
 import java.util.*;
 import jakarta.annotation.Generated;
 
@@ -26,7 +25,7 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-29T13:45:58.449049799+05:30[Asia/Kolkata]", comments = "Generator version: 7.21.0")
 public class UserUpdate {
 
-  private @Nullable UUID authId;
+  private Long userId;
 
   private @Nullable String email;
 
@@ -51,11 +50,11 @@ public class UserUpdate {
    */
   public enum UserTypeEnum {
     USER("user"),
-    
+
     ADMIN("admin"),
-    
+
     CSR("csr"),
-    
+
     CUSTOM("custom");
 
     private final String value;
@@ -87,25 +86,17 @@ public class UserUpdate {
 
   private @Nullable UserTypeEnum userType;
 
-  public UserUpdate authId(@Nullable UUID authId) {
-    this.authId = authId;
+  public UserUpdate authId(Long userId) {
+    this.userId = userId;
     return this;
   }
 
-  /**
-   * Get authId
-   * @return authId
-   */
-  @Valid 
-  @Schema(name = "auth_id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("auth_id")
-  public @Nullable UUID getAuthId() {
-    return authId;
+  public long getUserId() {
+    return this.userId;
   }
 
-  @JsonProperty("auth_id")
-  public void setAuthId(@Nullable UUID authId) {
-    this.authId = authId;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public UserUpdate email(@Nullable String email) {
@@ -115,9 +106,11 @@ public class UserUpdate {
 
   /**
    * Get email
+   * 
    * @return email
    */
-  @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") @jakarta.validation.constraints.Email 
+  @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+  @jakarta.validation.constraints.Email
   @Schema(name = "email", example = "general.kenobi123@starwars.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("email")
   public @Nullable String getEmail() {
@@ -136,9 +129,10 @@ public class UserUpdate {
 
   /**
    * Get password
+   * 
    * @return password
    */
-  
+
   @Schema(name = "password", example = "hellothere", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("password")
   public @Nullable String getPassword() {
@@ -157,9 +151,10 @@ public class UserUpdate {
 
   /**
    * Get fullName
+   * 
    * @return fullName
    */
-  @Pattern(regexp = "/^\\p{L}+([\\s'-]\\p{L}+)*$/u") 
+  @Pattern(regexp = "/^\\p{L}+([\\s'-]\\p{L}+)*$/u")
   @Schema(name = "full_name", example = "general kenobi", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("full_name")
   public @Nullable String getFullName() {
@@ -178,9 +173,10 @@ public class UserUpdate {
 
   /**
    * Get phone
+   * 
    * @return phone
    */
-  
+
   @Schema(name = "phone", example = "9099472349", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("phone")
   public @Nullable Integer getPhone() {
@@ -199,9 +195,10 @@ public class UserUpdate {
 
   /**
    * Get address
+   * 
    * @return address
    */
-  @Pattern(regexp = "^[a-zA-Z0-9\\s.,'#-]{3,100}$") 
+  @Pattern(regexp = "^[a-zA-Z0-9\\s.,'#-]{3,100}$")
   @Schema(name = "address", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("address")
   public @Nullable String getAddress() {
@@ -220,9 +217,10 @@ public class UserUpdate {
 
   /**
    * Get city
+   * 
    * @return city
    */
-  
+
   @Schema(name = "city", example = "bengaluru", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("city")
   public @Nullable String getCity() {
@@ -241,9 +239,10 @@ public class UserUpdate {
 
   /**
    * Get state
+   * 
    * @return state
    */
-  
+
   @Schema(name = "state", example = "karnataka", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("state")
   public @Nullable String getState() {
@@ -262,9 +261,10 @@ public class UserUpdate {
 
   /**
    * Get country
+   * 
    * @return country
    */
-  
+
   @Schema(name = "country", example = "india", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("country")
   public @Nullable String getCountry() {
@@ -283,9 +283,10 @@ public class UserUpdate {
 
   /**
    * Get pincode
+   * 
    * @return pincode
    */
-  
+
   @Schema(name = "pincode", example = "560071", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("pincode")
   public @Nullable String getPincode() {
@@ -304,9 +305,10 @@ public class UserUpdate {
 
   /**
    * Get userType
+   * 
    * @return userType
    */
-  
+
   @Schema(name = "user_type", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("user_type")
   public @Nullable UserTypeEnum getUserType() {
@@ -327,7 +329,7 @@ public class UserUpdate {
       return false;
     }
     UserUpdate userUpdate = (UserUpdate) o;
-    return Objects.equals(this.authId, userUpdate.authId) &&
+    return Objects.equals(this.userId, userUpdate.userId) &&
         Objects.equals(this.email, userUpdate.email) &&
         Objects.equals(this.password, userUpdate.password) &&
         Objects.equals(this.fullName, userUpdate.fullName) &&
@@ -342,14 +344,14 @@ public class UserUpdate {
 
   @Override
   public int hashCode() {
-    return Objects.hash(authId, email, password, fullName, phone, address, city, state, country, pincode, userType);
+    return Objects.hash(userId, email, password, fullName, phone, address, city, state, country, pincode, userType);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserUpdate {\n");
-    sb.append("    authId: ").append(toIndentedString(authId)).append("\n");
+    sb.append("    authId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    password: ").append("*").append("\n");
     sb.append("    fullName: ").append(toIndentedString(fullName)).append("\n");
@@ -372,4 +374,3 @@ public class UserUpdate {
     return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
-

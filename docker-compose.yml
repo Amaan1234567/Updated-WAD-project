@@ -28,6 +28,33 @@ services:
     networks:
       - plant-network
     env_file: "orders-service/.env"
+  
+  users-service:
+    container_name: users-service
+    image: plantio1/users-service:latest
+    ports:
+      - "8086:8086"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-sSfL",
+          "--head",
+          "-o",
+          "/dev/null",
+          "http://localhost:8086/actuator/health"
+        ]
+      timeout: 60s
+      interval: 5s
+      retries: 12
+    # depends_on:
+    #   supabase-pooler:
+    #     condition: service_healthy
+    networks:
+      - plant-network
+    env_file: "users-service/.env"
 
   discovery-server:
     container_name: discovery-server

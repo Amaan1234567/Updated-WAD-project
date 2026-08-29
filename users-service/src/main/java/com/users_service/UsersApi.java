@@ -155,7 +155,7 @@ public interface UsersApi {
         value = UsersApi.PATH_USERS_USER_ID_DELETE
     )
     default ResponseEntity<Void> usersUserIdDelete(
-        @Parameter(name = "user_id", description = "Numeric id of user that needs to be deleted", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Integer userId
+        @Parameter(name = "user_id", description = "Numeric id of user that needs to be deleted", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
@@ -184,8 +184,8 @@ public interface UsersApi {
         method = RequestMethod.GET,
         value = UsersApi.PATH_USERS_USER_ID_GET
     )
-    default ResponseEntity<Void> usersUserIdGet(
-        @Parameter(name = "user_id", description = "Numeric id of user that needs to be fetched", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Integer userId
+    default ResponseEntity<User> usersUserIdGet(
+        @Parameter(name = "user_id", description = "Numeric id of user that needs to be fetched", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 

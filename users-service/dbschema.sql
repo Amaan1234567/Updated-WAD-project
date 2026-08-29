@@ -8,6 +8,7 @@ CREATE SCHEMA IF NOT EXISTS users_svc;
 -- ENUMS
 -- -----------------------------------------------
 
+
 CREATE TYPE users_svc.app_role AS ENUM ('admin', 'user', 'csr', 'custom');
 
 CREATE TYPE users_svc.app_permission AS ENUM (
@@ -30,12 +31,14 @@ CREATE TYPE users_svc.app_permission AS ENUM (
     'users.delete_any'
 );
 
+create sequence users_svc.id_gen start with 10 increment by 10;
+
 -- -----------------------------------------------
 -- TABLES
 -- -----------------------------------------------
 
 CREATE TABLE users_svc.users (
-    user_id    TEXT PRIMARY KEY,
+    user_id    BIGSERIAL PRIMARY KEY,
     auth_id    UUID NOT NULL UNIQUE,
     email      VARCHAR(255) UNIQUE NOT NULL,
     password   VARCHAR(255),
@@ -172,20 +175,30 @@ $$;
 -- GRANTS
 -- -----------------------------------------------
 
-GRANT USAGE ON SCHEMA users_svc TO supabase_auth_admin;
-GRANT SELECT ON users_svc.users TO supabase_auth_admin;
-GRANT EXECUTE ON FUNCTION users_svc.custom_access_token_hook TO supabase_auth_admin;
-REVOKE EXECUTE ON FUNCTION users_svc.custom_access_token_hook FROM authenticated, anon, public;
-
+-- Allow the role to see the schema
 GRANT USAGE ON SCHEMA users_svc TO authenticated;
-GRANT SELECT ON users_svc.users TO authenticated;
-GRANT SELECT ON users_svc.role_permissions TO authenticated;
-GRANT SELECT ON users_svc.user_permissions TO authenticated;
-GRANT EXECUTE ON FUNCTION users_svc.authorize(users_svc.app_permission) TO authenticated;
 
--- -----------------------------------------------
--- RLS
--- -----------------------------------------------
+-- Allow the role to select/insert/update rows in the table
+GRANT SELECT, INSERT, UPDATE, DELETE ON users_svc.users TO authenticated;
 
-ALTER TABLE users_svc.role_permissions  ENABLE ROW LEVEL SECURITY;
-ALTER TABLE users_svc.user_permissions  ENABLE ROW LEVEL SECURITY;
+-- Grant permission on the sequence used by the 'users' table
+GRANT USAGE, SELECT ON SEQUENCE users_svc.id_gen TO authenticated;
+
+-- Create the role and user
+CREATE ROLE users_svc_role NOINHERIT;
+CREATE USER users_svc_app WITH PASSWORD 'your-strong-password-here' IN ROLE users_svc_role;
+
+-- users schema permissions
+GRANT USAGE ON SCHEMA users_svc TO users_svc_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA users_svc TO users_svc_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA users_svc TO users_svc_app;
+
+-- Users schema (read-only, needed for RLS policy lookups)
+GRANT USAGE ON SCHEMA users_svc TO users_svc_app;
+GRANT SELECT ON users_svc.users TO users_svc_app;
+
+-- Ensure future tables also get permissions
+ALTER DEFAULT PRIVILEGES IN SCHEMA users_svc
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO users_svc_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA users_svc
+    GRANT USAGE, SELECT ON SEQUENCES TO users_svc_app;
