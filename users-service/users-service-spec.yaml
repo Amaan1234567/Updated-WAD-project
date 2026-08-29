@@ -1,0 +1,229 @@
+openapi: "3.0.3"
+info:
+  title: Users Api
+  version: "1.0"
+servers:
+  - url: http://users-service/v1
+paths:
+  /users/{user_id}:
+    get:
+      summary: Get a user based on user_id
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric id of user that needs to be fetched
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+    delete:
+      summary: delete a user based on user_id
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric id of user that needs to be deleted
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+      
+  /users/register:
+    post:
+      summary: registers a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/new_user"
+      responses:
+        "200":
+          description: "OK"
+        "500":
+          description: "Server Error"
+  /users/add:
+    post:
+      summary: registers a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/new_user_api"
+      responses:
+        "200":
+          description: "OK"
+        "500":
+          description: "Server Error"
+  /users/:
+    put:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user_update"
+      responses:
+        "200":
+          description: "OK"
+        "404":
+          description: "Not Found"
+        "500":
+          description: "Server Error"
+  
+        
+              
+              
+components:
+  schemas:
+    new_user:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          example: general.kenobi123@starwars.com
+        password:
+          type: string
+          format: password
+          example: hellothere
+        full_name:
+          type: string
+          example: general kenobi
+          pattern: /^\p{L}+([\s'-]\p{L}+)*$/u
+        phone:
+         type: integer
+         example: 9099472349
+        address:
+          type: string
+          pattern: ^[a-zA-Z0-9\s.,'#-]{3,100}$
+        city:
+          type: string
+          example: bengaluru
+        state:
+          type: string
+          example: karnataka
+        country:
+          type: string
+          example: india
+        pincode:
+          type: string
+          example: 560071
+
+    new_user_api:
+      type: object
+      required:
+        - auth_id
+        - email
+        - user_type
+      properties:
+        auth_id:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+        email:
+          type: string
+          format: email
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          example: general.kenobi123@starwars.com
+        password:
+          type: string
+          format: password
+          example: hellothere
+        full_name:
+          type: string
+          example: general kenobi
+          pattern: /^\p{L}+([\s'-]\p{L}+)*$/u
+        phone:
+         type: integer
+         example: 9099472349
+        address:
+          type: string
+          pattern: ^[a-zA-Z0-9\s.,'#-]{3,100}$
+        city:
+          type: string
+          example: bengaluru
+        state:
+          type: string
+          example: karnataka
+        country:
+          type: string
+          example: india
+        pincode:
+          type: string
+          example: 560071
+        user_type:
+          type: string
+          enum :
+            [
+              "user",
+              "admin",
+              "csr",
+              "custom"
+            ]
+    user_update:
+      type: object
+      required:
+        - user_id
+      properties:
+        auth_id:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+        email:
+          type: string
+          format: email
+          pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+          example: general.kenobi123@starwars.com
+        password:
+          type: string
+          format: password
+          example: hellothere
+        full_name:
+          type: string
+          example: general kenobi
+          pattern: /^\p{L}+([\s'-]\p{L}+)*$/u
+        phone:
+         type: integer
+         example: 9099472349
+        address:
+          type: string
+          pattern: ^[a-zA-Z0-9\s.,'#-]{3,100}$
+        city:
+          type: string
+          example: bengaluru
+        state:
+          type: string
+          example: karnataka
+        country:
+          type: string
+          example: india
+        pincode:
+          type: string
+          example: 560071
+        user_type:
+          type: string
+          enum :
+            [
+              "user",
+              "admin",
+              "csr",
+              "custom"
+            ]
+
+
