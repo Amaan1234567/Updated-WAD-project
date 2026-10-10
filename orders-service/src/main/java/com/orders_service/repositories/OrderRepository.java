@@ -12,9 +12,8 @@ import com.orders_service.Order;
 import com.orders_service.Order.OrderStatusEnum;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query(value = "SELECT * FROM orders_svc.orders o WHERE " + 
-        "(o.customer_id = :userId)",nativeQuery = true
-    )
+    @Query(value = "SELECT * FROM orders_svc.orders o WHERE " +
+            "(o.customer_id = :userId)", nativeQuery = true)
     List<Order> searchByUserId(@Param("userId") Long userId);
 
     @Modifying(clearAutomatically = true)

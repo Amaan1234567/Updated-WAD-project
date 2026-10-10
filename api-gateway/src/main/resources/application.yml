@@ -150,39 +150,62 @@ spring:
               args:
                 permissions: "orders.delete"
 
-        # ─── Users ──────────────────────────────────────────────
-        - id: users-get
+        # ─── Users Service ──────────────────────────────────────────────
+        - id: users-register
           uri: lb://users-service
           predicates:
-            - Path=/users/**
-            - Method=GET
+            - Path=/v1/users/register
+            - Method=POST
+
+        - id: users-add
+          uri: lb://users-service
+          predicates:
+            - Path=/v1/users/add
+            - Method=POST
           filters:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permissions: "users.view_all"
+                permissions: "users.create_any"
 
         - id: users-update
           uri: lb://users-service
           predicates:
-            - Path=/users/**
+            - Path=/v1/users
             - Method=PUT
           filters:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permissions: "users.update_any"
+                permissions: 
+                - "users.update_any"
+                - "users.update_own"
 
-        - id: users-delete
+        - id: users-get-by-id
           uri: lb://users-service
           predicates:
-            - Path=/users/**
+            - Path=/v1/users/{user_id}
+            - Method=GET
+          filters:
+            - TokenRelay
+            - name: PermissionAuth
+              args:
+                permissions: 
+                - "users.view_all"
+                - "users.view_own"
+
+        - id: users-delete-by-id
+          uri: lb://users-service
+          predicates:
+            - Path=/v1/users/{user_id}
             - Method=DELETE
           filters:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permissions: "users.delete_any"
+                permissions: 
+                - "users.delete_any"
+                - "users.delete_own"
 
       globalcors:
         corsConfigurations:

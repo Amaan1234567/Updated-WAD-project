@@ -14,6 +14,7 @@
         <module>discovery-server</module>
         <module>products-service</module>
         <module>orders-service</module>
+        <module>users-service</module>
     </modules>
 
     <properties>
