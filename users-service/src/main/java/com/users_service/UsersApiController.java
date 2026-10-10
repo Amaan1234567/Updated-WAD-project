@@ -37,7 +37,8 @@ public class UsersApiController implements UsersApi {
         return Optional.ofNullable(request);
     }
 
-    public ResponseEntity<Void> usersAddPost(@Parameter(name = "NewUserApi", description = "", required = true) @Valid @RequestBody NewUserApi newUserApi) {
+    public ResponseEntity<Void> usersAddPost(
+            @Parameter(name = "NewUserApi", description = "", required = true) @Valid @RequestBody NewUserApi newUserApi) {
         try {
             usersService.createUserApi(newUserApi);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -57,6 +58,8 @@ public class UsersApiController implements UsersApi {
         try {
             usersService.updateUser(userUpdate);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (java.util.NoSuchElementException Error404) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (JpaSystemException e) {
             if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -82,11 +85,16 @@ public class UsersApiController implements UsersApi {
         }
     }
 
-    public ResponseEntity<Void> usersUserIdDelete(@Parameter(name = "user_id", description = "Numeric id of user that needs to be deleted", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId) {
+    public ResponseEntity<Void> usersUserIdDelete(
+            @Parameter(name = "user_id", description = "Numeric id of user that needs to be deleted", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId) {
         try {
             usersService.deleteUser(userId);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (JpaSystemException e) {
+        } catch (java.util.NoSuchElementException Error404) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        catch (JpaSystemException e) {
             if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             } else {
@@ -101,8 +109,12 @@ public class UsersApiController implements UsersApi {
         try {
             User user = usersService.getUser(userId);
             return ResponseEntity.ok(user);
+        } catch (java.util.NoSuchElementException Error404) {
+            System.out.println(Error404);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (JpaSystemException e) {
             if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
+                System.out.println(e);
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             } else {
                 System.out.println(e.getMessage());

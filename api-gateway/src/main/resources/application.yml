@@ -191,8 +191,8 @@ spring:
             - name: PermissionAuth
               args:
                 permissions: 
-                - "users.view_all"
                 - "users.view_own"
+                - "users.view_all"
 
         - id: users-delete-by-id
           uri: lb://users-service
