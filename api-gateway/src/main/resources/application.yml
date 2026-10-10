@@ -166,7 +166,7 @@ spring:
             - TokenRelay
             - name: PermissionAuth
               args:
-                permissions: "users.create_any"
+                permissions: "users.create"
 
         - id: users-update
           uri: lb://users-service
@@ -223,3 +223,13 @@ eureka:
     service-url:
       defaultZone: http://discovery-server:8761/eureka/
     fetch-registry: true
+
+logging:
+  level:
+    # Gateway routing and filter logs
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    
+    # Netty payload, header, and connection logs
+    reactor.netty: DEBUG
