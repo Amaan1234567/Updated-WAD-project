@@ -1,0 +1,13 @@
+from eclipse-temurin:21-jre-ubi9-minimal
+
+arg JAR_FILE=target/*.jar
+workdir /opt/plant.io/users-service
+
+copy ${JAR_FILE} ./users-service.jar
+
+expose 8086
+
+run useradd users-service
+user users-service
+
+cmd ["java","-jar","users-service.jar"]

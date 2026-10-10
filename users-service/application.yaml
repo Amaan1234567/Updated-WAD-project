@@ -1,0 +1,37 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          prepare_replacement: 'true'
+  application:
+    name: users-service
+  datasource:
+    password: ${USERS_SVC_SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    username: users_svc_app.your-tenant-id
+    url: jdbc:postgresql://supabase-pooler:6543/postgres?currentSchema=users_svc&prepareThreshold=0
+  jackson:
+    date-format: org.openapitools.RFC3339DateFormat
+    datetype:
+      write-dates-as-timestamps: false
+eureka:
+  client:
+    register-with-eureka: 'true'
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+    fetch-registry: 'true'
+  instance:
+    prefer-ip-address: 'true'
+springdoc:
+  enable-native-support: true
+server:
+  port: '8086'
+logging:
+  request-body-enabled: false

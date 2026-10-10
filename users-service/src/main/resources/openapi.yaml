@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: Users Api
+  version: "1.0"
+servers:
+- url: http://users-service/v1
+paths:
+  /users/{user_id}:
+    delete:
+      parameters:
+      - description: Numeric id of user that needs to be deleted
+        explode: false
+        in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Not Found
+        "500":
+          description: Server Error
+      summary: delete a user based on user_id
+      x-accepts:
+      - application/json
+    get:
+      parameters:
+      - description: Numeric id of user that needs to be fetched
+        explode: false
+        in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Not Found
+        "500":
+          description: Server Error
+      summary: Get a user based on user_id
+      x-accepts:
+      - application/json
+  /users/register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/new_user"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Server Error
+      summary: registers a new user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /users/add:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/new_user_api"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Server Error
+      summary: registers a new user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /users/:
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user_update"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    new_user:
+      properties:
+        email:
+          example: general.kenobi123@starwars.com
+          format: email
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          type: string
+        password:
+          example: hellothere
+          format: password
+          type: string
+        full_name:
+          example: general kenobi
+          pattern: "/^\\p{L}+([\\s'-]\\p{L}+)*$/u"
+          type: string
+        phone:
+          example: 9099472349
+          type: integer
+        address:
+          pattern: "^[a-zA-Z0-9\\s.,'#-]{3,100}$"
+          type: string
+        city:
+          example: bengaluru
+          type: string
+        state:
+          example: karnataka
+          type: string
+        country:
+          example: india
+          type: string
+        pincode:
+          example: "560071"
+          type: string
+      required:
+      - email
+      type: object
+    new_user_api:
+      properties:
+        auth_id:
+          format: uuid
+          pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+          type: string
+        email:
+          example: general.kenobi123@starwars.com
+          format: email
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          type: string
+        password:
+          example: hellothere
+          format: password
+          type: string
+        full_name:
+          example: general kenobi
+          pattern: "/^\\p{L}+([\\s'-]\\p{L}+)*$/u"
+          type: string
+        phone:
+          example: 9099472349
+          type: integer
+        address:
+          pattern: "^[a-zA-Z0-9\\s.,'#-]{3,100}$"
+          type: string
+        city:
+          example: bengaluru
+          type: string
+        state:
+          example: karnataka
+          type: string
+        country:
+          example: india
+          type: string
+        pincode:
+          example: "560071"
+          type: string
+        user_type:
+          enum:
+          - user
+          - admin
+          - csr
+          - custom
+          type: string
+      required:
+      - auth_id
+      - email
+      - user_type
+      type: object
+    user_update:
+      properties:
+        auth_id:
+          format: uuid
+          pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+          type: string
+        email:
+          example: general.kenobi123@starwars.com
+          format: email
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          type: string
+        password:
+          example: hellothere
+          format: password
+          type: string
+        full_name:
+          example: general kenobi
+          pattern: "/^\\p{L}+([\\s'-]\\p{L}+)*$/u"
+          type: string
+        phone:
+          example: 9099472349
+          type: integer
+        address:
+          pattern: "^[a-zA-Z0-9\\s.,'#-]{3,100}$"
+          type: string
+        city:
+          example: bengaluru
+          type: string
+        state:
+          example: karnataka
+          type: string
+        country:
+          example: india
+          type: string
+        pincode:
+          example: "560071"
+          type: string
+        user_type:
+          enum:
+          - user
+          - admin
+          - csr
+          - custom
+          type: string
+      required:
+      - user_id
+      type: object
