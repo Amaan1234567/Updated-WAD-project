@@ -6,7 +6,7 @@
 -- 1. ENUMS
 -- -----------------------------------------------
 
-CREATE TYPE users_svc.app_role AS ENUM ('admin', 'user', 'csr', 'custom');
+CREATE TYPE users_svc.app_role AS ENUM ('ADMIN', 'USER', 'CSR', 'CUSTOM');
 
 CREATE TYPE users_svc.app_permission AS ENUM (
     -- Product permissions
@@ -40,7 +40,7 @@ CREATE TABLE users_svc.role_permissions (
 
 create table users_svc.user_roles (
   user_id uuid not null,
-  role users_svc.app_role not null default 'user'::users_svc.app_role,
+  role users_svc.app_role not null default 'USER'::users_svc.app_role,
   constraint user_roles_pkey primary key (user_id),
   constraint user_roles_user_id_fkey foreign KEY (user_id) references auth.users (id) on update CASCADE on delete CASCADE
 ) TABLESPACE pg_default;
@@ -58,34 +58,34 @@ CREATE TABLE users_svc.user_permissions (
 
 -- ADMIN gets everything
 INSERT INTO users_svc.role_permissions (role, permission) VALUES
-    ('admin', 'products.create'),
-    ('admin', 'products.update'),
-    ('admin', 'products.delete'),
-    ('admin', 'orders.view_own'),
-    ('admin', 'orders.update_own'),
-    ('admin', 'orders.view_all'),
-    ('admin', 'orders.update_status'),
-    ('admin', 'orders.cancel_any'),
-    ('admin', 'orders.delete'),
-    ('admin', 'users.view_all'),
-    ('admin', 'users.update_any'),
-    ('admin', 'users.delete_any');
+    ('ADMIN', 'products.create'),
+    ('ADMIN', 'products.update'),
+    ('ADMIN', 'products.delete'),
+    ('ADMIN', 'orders.view_own'),
+    ('ADMIN', 'orders.update_own'),
+    ('ADMIN', 'orders.view_all'),
+    ('ADMIN', 'orders.update_status'),
+    ('ADMIN', 'orders.cancel_any'),
+    ('ADMIN', 'orders.delete'),
+    ('ADMIN', 'users.view_all'),
+    ('ADMIN', 'users.update_any'),
+    ('ADMIN', 'users.delete_any');
 
 -- CSR can manage orders and view users, no product write access
 INSERT INTO users_svc.role_permissions (role, permission) VALUES
-    ('csr', 'orders.view_own'),
-    ('csr', 'orders.update_own'),
-    ('csr', 'orders.view_all'),
-    ('csr', 'orders.update_status'),
-    ('csr', 'orders.cancel_any'),
-    ('csr', 'users.view_all'),
-    ('csr', 'products.create'),
-    ('csr', 'products.update');
+    ('CSR', 'orders.view_own'),
+    ('CSR', 'orders.update_own'),
+    ('CSR', 'orders.view_all'),
+    ('CSR', 'orders.update_status'),
+    ('CSR', 'orders.cancel_any'),
+    ('CSR', 'users.view_all'),
+    ('CSR', 'products.create'),
+    ('CSR', 'products.update');
 
 -- USER can only manage their own orders
 INSERT INTO users_svc.role_permissions (role, permission) VALUES
-    ('user', 'orders.view_own'),
-    ('user', 'orders.update_own');
+    ('USER', 'orders.view_own'),
+    ('USER', 'orders.update_own');
 
 -- CUSTOM gets no default permissions
 -- assigned entirely via users_svc.user_permissions per user
@@ -129,7 +129,10 @@ $$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 -- -----------------------------------------------
 
 CREATE OR REPLACE FUNCTION users_svc.custom_access_token_hook(event JSONB)
-RETURNS JSONB LANGUAGE plpgsql VOLATILE AS $$
+RETURNS JSONB LANGUAGE plpgsql VOLATILE
+SECURITY DEFINER
+SET search_path = users_svc
+AS $$
 DECLARE
     claims    JSONB;
     user_role users_svc.app_role;
@@ -138,25 +141,25 @@ BEGIN
     target_user_id := (event->>'user_id')::UUID;
 
     -- Upsert the default role if the user doesn't have one yet
-    INSERT INTO users_svc.user_roles (user_id, role)
-    VALUES (target_user_id, 'user')
+    INSERT INTO users_svc.users (auth_id, user_type)
+    VALUES (target_user_id, 'USER')
     ON CONFLICT DO NOTHING;
 
     -- Fetch highest role
-    SELECT role INTO user_role
-    FROM users_svc.user_roles
+    SELECT user_type INTO user_role
+    FROM users_svc.users
     WHERE user_id = target_user_id
-    ORDER BY CASE role
-        WHEN 'admin'  THEN 1
-        WHEN 'csr'    THEN 2
-        WHEN 'user'   THEN 3
-        WHEN 'custom' THEN 4
+    ORDER BY CASE user_type
+        WHEN 'ADMIN'  THEN 1
+        WHEN 'CSR'    THEN 2
+        WHEN 'USER'   THEN 3
+        WHEN 'CUSTOM' THEN 4
     END
     LIMIT 1;
 
     claims := event->'claims';
     claims := jsonb_set(claims, '{user_role}',
-        COALESCE(to_jsonb(user_role::TEXT), '"user"')
+        COALESCE(to_jsonb(user_role::TEXT), '"USER"')
     );
     event := jsonb_set(event, '{claims}', claims);
     RETURN event;
@@ -170,6 +173,7 @@ REVOKE EXECUTE ON FUNCTION users_svc.custom_access_token_hook FROM authenticated
 GRANT ALL ON TABLE user_svc.user_roles TO supabase_auth_admin;
 GRANT ALL ON TABLE user_svc.user_permissions TO supabase_auth_admin;
 GRANT ALL ON TABLE users_svc.user_roles TO supabase_auth_admin;
+GRANT ALL ON TABLE users_svc.users TO supabase_auth_admin;
 REVOKE ALL ON TABLE users_svc.user_roles FROM authenticated, anon, public;
 
 -- Grant authenticated role permission to execute authorize

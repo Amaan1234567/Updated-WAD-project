@@ -1,10 +1,10 @@
 insert into public.role_permissions (role, permission)
 values
-  ('admin', 'products.remove'),
-  ('admin', 'products.read'),
-  ('admin', 'products.update'),
-  ('admin', 'products.add'),
-  ('csr', 'products.read'),
-  ('csr', 'products.update'),
-  ('csr', 'products.add'),
-  ('user', 'products.read');
+  ('ADMIN', 'products.remove'),
+  ('ADMIN', 'products.read'),
+  ('ADMIN', 'products.update'),
+  ('ADMIN', 'products.add'),
+  ('CSR', 'products.read'),
+  ('CSR', 'products.update'),
+  ('CSR', 'products.add'),
+  ('USER', 'products.read');

@@ -1,0 +1,44 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "java (build)",
+			"paths": [
+				"${workspace}"
+			],
+			"isFullBuild": false,
+			"group": "build",
+			"problemMatcher": [],
+			"label": "java (build): Build Workspace",
+			"detail": "$(tools) Build all the Java projects in workspace."
+		},
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "frontend",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build - frontend",
+			"detail": "tsc -b && vite build"
+		},
+		{
+			"label": "dev env launch",
+			"type": "shell",
+			"command": "docker-compose up -d",
+			"dependsOn": [
+				"java (build)",
+				"npm: build - frontend"
+			],
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"runOptions": {
+				"runOn": "folderOpen",
+				"instanceLimit": 1,
+				"instancePolicy": "prompt"
+			}
+		}
+	]
+}
