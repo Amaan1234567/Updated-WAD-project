@@ -38,9 +38,9 @@ public class UsersApiController implements UsersApi {
     }
 
     public ResponseEntity<Void> usersAddPost(
-            @Parameter(name = "NewUserApi", description = "", required = true) @Valid @RequestBody NewUserApi newUserApi) {
+            @Parameter(name = "NewUserApi", description = "", required = true) @Valid @RequestBody NewUser newUserApi) {
         try {
-            usersService.createUserApi(newUserApi);
+            usersService.createUser(newUserApi);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (JpaSystemException e) {
             if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
@@ -60,21 +60,6 @@ public class UsersApiController implements UsersApi {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (java.util.NoSuchElementException Error404) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (JpaSystemException e) {
-            if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            } else {
-                System.out.println(e.getMessage());
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-    }
-
-    public ResponseEntity<Void> usersRegisterPost(
-            @Parameter(name = "NewUser", description = "", required = true) @Valid @RequestBody NewUser newUser) {
-        try {
-            usersService.createUser(newUser);
-            return new ResponseEntity<>(HttpStatus.OK);
         } catch (JpaSystemException e) {
             if (e.getRootCause().getMessage().contains("new row violates row-level security policy for table")) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);

@@ -47,20 +47,20 @@ public class User {
     private String fullName;
 
     @Nullable
-    private Integer phone;
-    
+    private Long phone;
+
     @Nullable
     private String address;
-    
+
     @Nullable
     private String city;
-    
+
     @Nullable
     private String state;
-    
+
     @Nullable
     private String country;
-    
+
     @Nullable
     private String pincode;
 
@@ -77,7 +77,7 @@ public class User {
     @Column(name = "updated_at")
     private Timestamp updatedTimestamp;
 
-    User(String password, String email, String fullName, Integer phone, String address, String city, String state,
+    User(String password, String email, String fullName, Long phone, String address, String city, String state,
             String country, String pincode, UserType userType, Timestamp createdTimestamp, Timestamp updatedTimestamp) {
         this.password = password;
         this.email = email;
@@ -170,14 +170,14 @@ public class User {
     /**
      * @return the phone
      */
-    public Integer getPhone() {
+    public Long getPhone() {
         return phone;
     }
 
     /**
      * @param phone the phone to set
      */
-    public void setPhone(Integer phone) {
+    public void setPhone(Long phone) {
         this.phone = phone;
     }
 
@@ -293,7 +293,7 @@ public class User {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public static User newUserApiToUser(NewUserApi newUserApi) {
+    public static User newUserApiToUser(NewUser newUserApi) {
         User user = new User();
         user.email = newUserApi.getEmail();
         user.fullName = newUserApi.getFullName();
@@ -304,20 +304,6 @@ public class User {
         user.country = newUserApi.getCountry();
         user.pincode = newUserApi.getPincode();
         user.userType = UserType.fromValue(newUserApi.getUserType().toString());
-        return user;
-    }
-
-    public static User newUserToUser(NewUser newUser) {
-        User user = new User();
-        user.email = newUser.getEmail();
-        user.fullName = newUser.getFullName();
-        user.phone = newUser.getPhone();
-        user.address = newUser.getAddress();
-        user.city = newUser.getCity();
-        user.state = newUser.getState();
-        user.country = newUser.getCountry();
-        user.pincode = newUser.getPincode();
-        user.userType = UserType.USER;
         return user;
     }
 

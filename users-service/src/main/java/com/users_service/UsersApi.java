@@ -29,94 +29,50 @@ public interface UsersApi {
     }
 
     String PATH_USERS_ADD_POST = "/users/add";
+
     /**
      * POST /users/add : registers a new user
      *
-     * @param newUserApi  (required)
+     * @param newUserApi (required)
      * @return OK (status code 200)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "usersAddPost",
-        summary = "registers a new user",
-        responses = {
+    @Operation(operationId = "usersAddPost", summary = "registers a new user", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = UsersApi.PATH_USERS_ADD_POST,
-        consumes = { "application/json" }
-    )
+    })
+    @RequestMapping(method = RequestMethod.POST, value = UsersApi.PATH_USERS_ADD_POST, consumes = {
+            "application/json" })
     default ResponseEntity<Void> usersAddPost(
-        @Parameter(name = "NewUserApi", description = "", required = true) @Valid @RequestBody NewUserApi newUserApi
-    ) {
+            @Parameter(name = "NewUserApi", description = "", required = true) @Valid @RequestBody NewUser newUserApi) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
-
     String PATH_USERS_PUT = "/users/";
+
     /**
      * PUT /users/
      *
-     * @param userUpdate  (required)
+     * @param userUpdate (required)
      * @return OK (status code 200)
      *         or Not Found (status code 404)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "usersPut",
-        responses = {
+    @Operation(operationId = "usersPut", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.PUT,
-        value = UsersApi.PATH_USERS_PUT,
-        consumes = { "application/json" }
-    )
+    })
+    @RequestMapping(method = RequestMethod.PUT, value = UsersApi.PATH_USERS_PUT, consumes = { "application/json" })
     default ResponseEntity<Void> usersPut(
-        @Parameter(name = "UserUpdate", description = "", required = true) @Valid @RequestBody UserUpdate userUpdate
-    ) {
+            @Parameter(name = "UserUpdate", description = "", required = true) @Valid @RequestBody UserUpdate userUpdate) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
-
-
-    String PATH_USERS_REGISTER_POST = "/users/register";
-    /**
-     * POST /users/register : registers a new user
-     *
-     * @param newUser  (required)
-     * @return OK (status code 200)
-     *         or Server Error (status code 500)
-     */
-    @Operation(
-        operationId = "usersRegisterPost",
-        summary = "registers a new user",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = UsersApi.PATH_USERS_REGISTER_POST,
-        consumes = { "application/json" }
-    )
-    default ResponseEntity<Void> usersRegisterPost(
-        @Parameter(name = "NewUser", description = "", required = true) @Valid @RequestBody NewUser newUser
-    ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
 
     String PATH_USERS_USER_ID_DELETE = "/users/{user_id}";
+
     /**
      * DELETE /users/{user_id} : delete a user based on user_id
      *
@@ -125,28 +81,20 @@ public interface UsersApi {
      *         or Not Found (status code 400)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "usersUserIdDelete",
-        summary = "delete a user based on user_id",
-        responses = {
+    @Operation(operationId = "usersUserIdDelete", summary = "delete a user based on user_id", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = UsersApi.PATH_USERS_USER_ID_DELETE
-    )
+    })
+    @RequestMapping(method = RequestMethod.DELETE, value = UsersApi.PATH_USERS_USER_ID_DELETE)
     default ResponseEntity<Void> usersUserIdDelete(
-        @Parameter(name = "user_id", description = "Numeric id of user that needs to be deleted", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId
-    ) {
+            @Parameter(name = "user_id", description = "Numeric id of user that needs to be deleted", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
-
     String PATH_USERS_USER_ID_GET = "/users/{user_id}";
+
     /**
      * GET /users/{user_id} : Get a user based on user_id
      *
@@ -155,22 +103,14 @@ public interface UsersApi {
      *         or Not Found (status code 400)
      *         or Server Error (status code 500)
      */
-    @Operation(
-        operationId = "usersUserIdGet",
-        summary = "Get a user based on user_id",
-        responses = {
+    @Operation(operationId = "usersUserIdGet", summary = "Get a user based on user_id", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server Error")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = UsersApi.PATH_USERS_USER_ID_GET
-    )
+    })
+    @RequestMapping(method = RequestMethod.GET, value = UsersApi.PATH_USERS_USER_ID_GET)
     default ResponseEntity<User> usersUserIdGet(
-        @Parameter(name = "user_id", description = "Numeric id of user that needs to be fetched", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId
-    ) {
+            @Parameter(name = "user_id", description = "Numeric id of user that needs to be fetched", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

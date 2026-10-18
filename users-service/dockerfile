@@ -1,6 +1,6 @@
 from eclipse-temurin:21-jre-ubi9-minimal
 
-arg JAR_FILE=target/*.jar
+arg JAR_FILE=./target/*.jar
 workdir /opt/plant.io/users-service
 
 copy ${JAR_FILE} ./users-service.jar

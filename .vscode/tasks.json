@@ -24,21 +24,22 @@
 		{
 			"label": "dev env launch",
 			"type": "shell",
-			"command": "docker-compose up -d",
-			"dependsOn": [
-				"java (build)",
-				"npm: build - frontend"
-			],
+			"command": "./scripts/build_dev.sh && docker-compose up -d",
 			"problemMatcher": [],
 			"group": {
 				"kind": "build",
 				"isDefault": true
+			},
+			"options": {
+				"env": {
+					"JAVA_HOME": "/usr/lib/jvm/java-21-temurin-jdk"
+				}
 			},
 			"runOptions": {
 				"runOn": "folderOpen",
 				"instanceLimit": 1,
 				"instancePolicy": "prompt"
 			}
-		}
+		},
 	]
 }

@@ -37,15 +37,9 @@ public class UsersService {
         }
     }
 
-    public void createUserApi(NewUserApi newUserApi) {
+    public void createUser(NewUser newUserApi) {
         setRlsContext();
         User user = User.newUserApiToUser(newUserApi);
-        userRepository.save(user);
-    }
-
-    public void createUser(NewUser newUser) {
-        setRlsContext();
-        User user = User.newUserToUser(newUser);
         userRepository.save(user);
     }
 

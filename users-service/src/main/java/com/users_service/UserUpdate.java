@@ -27,7 +27,7 @@ public class UserUpdate {
 
   private @Nullable String fullName;
 
-  private @Nullable Integer phone;
+  private @Nullable Long phone;
 
   private @Nullable String address;
 
@@ -148,7 +148,8 @@ public class UserUpdate {
    * 
    * @return fullName
    */
-  @Pattern(regexp = "/^\\p{L}+([\\s'-]\\p{L}+)*$/u")
+  @Pattern(regexp = "^\\p{L}+(?:[' -]\\p{L}+)*$")
+
   @Schema(name = "full_name", example = "general kenobi", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("full_name")
   public @Nullable String getFullName() {
@@ -160,7 +161,7 @@ public class UserUpdate {
     this.fullName = fullName;
   }
 
-  public UserUpdate phone(@Nullable Integer phone) {
+  public UserUpdate phone(@Nullable Long phone) {
     this.phone = phone;
     return this;
   }
@@ -173,12 +174,12 @@ public class UserUpdate {
 
   @Schema(name = "phone", example = "9099472349", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("phone")
-  public @Nullable Integer getPhone() {
+  public @Nullable Long getPhone() {
     return phone;
   }
 
   @JsonProperty("phone")
-  public void setPhone(@Nullable Integer phone) {
+  public void setPhone(@Nullable Long phone) {
     this.phone = phone;
   }
 
