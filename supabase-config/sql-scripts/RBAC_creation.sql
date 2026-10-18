@@ -131,24 +131,27 @@ $$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 CREATE OR REPLACE FUNCTION users_svc.custom_access_token_hook(event JSONB)
 RETURNS JSONB LANGUAGE plpgsql VOLATILE
 SECURITY DEFINER
-SET search_path = users_svc
+SET search_path = users_svc, pg_catalog
 AS $$
 DECLARE
     claims    JSONB;
     user_role users_svc.app_role;
     target_user_id UUID;
+    email_id text;
 BEGIN
+-- RAISE EXCEPTION 'The incoming event payload is: %', event;
     target_user_id := (event->>'user_id')::UUID;
-
+    email_id := (event->'claims'->>'email');
+    
     -- Upsert the default role if the user doesn't have one yet
-    INSERT INTO users_svc.users (auth_id, user_type)
-    VALUES (target_user_id, 'USER')
+    INSERT INTO users_svc.users (auth_id,email, user_type)
+    VALUES (target_user_id, email_id, 'USER')
     ON CONFLICT DO NOTHING;
 
     -- Fetch highest role
     SELECT user_type INTO user_role
     FROM users_svc.users
-    WHERE user_id = target_user_id
+    WHERE auth_id = target_user_id
     ORDER BY CASE user_type
         WHEN 'ADMIN'  THEN 1
         WHEN 'CSR'    THEN 2
