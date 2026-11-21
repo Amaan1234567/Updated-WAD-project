@@ -162,3 +162,5 @@ dmypy.json
 cython_debug/
 
 node_modules/
+postman/
+.postman/

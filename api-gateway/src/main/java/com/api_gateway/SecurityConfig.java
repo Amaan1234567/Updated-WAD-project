@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
@@ -13,16 +14,15 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,ReactiveJwtDecoder jwtDecoder) {
+        return http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                        .pathMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                         .anyExchange().authenticated())
-                .cors(Customizer.withDefaults())
+                // .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults()) // picks up your ReactiveJwtDecoder bean
+                        .jwt(jwt -> jwt.jwtDecoder(jwtDecoder)) // picks up your ReactiveJwtDecoder bean
                 )
-                .csrf(ServerHttpSecurity.CsrfSpec::disable);
-        return http.build();
+                .csrf(ServerHttpSecurity.CsrfSpec::disable).build();
     }
 }

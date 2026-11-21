@@ -121,8 +121,9 @@ services:
       interval: 5s
       retries: 3
     environment:
-      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
-      - SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}
+      SUPABASE_DB_PASSWORD: ${SUPABASE_DB_PASSWORD}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER}
     networks:
       - plant-network
     depends_on:
@@ -151,6 +152,26 @@ services:
     depends_on:
       api-gateway:
         condition: service_healthy
+  keycloak-auth:
+    container_name: keycloak-auth
+    image: quay.io/keycloak/keycloak:26.8.1
+    ports:
+      - "8090:8080"
+      - "8444:8443"
+    restart: unless-stopped
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KC_HOSTNAME: ${KEYCLOAK_URL}
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: ${SUPABASE_DB_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://supabase-db:5432/postgres?currentSchema=keycloak_data
+    networks:
+      - plant-network
+
+
 
 networks:
   plant-network:
